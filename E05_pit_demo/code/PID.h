@@ -1,0 +1,43 @@
+/*
+ * PID.h
+ *
+ *  Created on: 2025年10月11日
+ *      Author: ji_rencai
+ */
+
+#ifndef CODE_PID_H_
+#define CODE_PID_H_
+
+#include "zf_common_headfile.h"
+
+#define Limit(x,y)          (x>y? y: (x<-(y)? -(y): x))
+
+#define Duty_max          1000
+#define Duty_min         -1000
+
+typedef struct
+{
+    float target_val;               //目标值
+    float actual_val;               //实际值
+    float integral;                 //定义积分值
+
+    float err;                      //定义偏差值
+    float err_last;                 //  e(k-1)
+    float err_previous;             //  e(k-2)
+
+    float Kp;               //定义比例、积分、微分系数
+    float Ki;               //定义比例、积分、微分系数
+    float Kd;               //定义比例、积分、微分系数
+    float limit;            //积分限幅
+    float p_result;         //比例、积分、微分运算结果
+    float i_result;         //比例、积分、微分运算结果
+    float d_result;         //比例、积分、微分运算结果
+    float inte_exce;        //积分过度
+}pidTypedef;
+
+extern pidTypedef pid_speed_r;
+extern pidTypedef pid_speed_l;
+
+void PID_Motor(pidTypedef *p,float nowSpeed);//电机转速pid
+
+#endif /* CODE_PID_H_ */
