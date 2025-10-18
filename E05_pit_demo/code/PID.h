@@ -17,17 +17,26 @@
 
 typedef struct
 {
+    float output;                   //输出值
+
     float target_val;               //目标值
-    float actual_val;               //实际值
+    float target_last_val;          //上一次的目标值
+    float actual_val;               //实际值PID
+    float uff;                      //开环力矩补偿
     float integral;                 //定义积分值
 
     float err;                      //定义偏差值
     float err_last;                 //  e(k-1)
     float err_previous;             //  e(k-2)
 
+    float acc;              //加速度
     float Kp;               //定义比例、积分、微分系数
     float Ki;               //定义比例、积分、微分系数
     float Kd;               //定义比例、积分、微分系数
+
+    float kff1;             //速度前馈
+    float kff2;             //加速度前馈
+
     float limit;            //积分限幅
     float p_result;         //比例、积分、微分运算结果
     float i_result;         //比例、积分、微分运算结果

@@ -35,7 +35,8 @@
 
 #include "isr_config.h"
 #include "isr.h"
-
+int16_t encoder_data_2_temp;
+int16_t encoder_data_4_temp;
 // 对于TC系列默认是不支持中断嵌套的，希望支持中断嵌套需要在中断内使用 interrupt_global_enable(0); 来开启中断嵌套
 // 简单点说实际上进入中断后TC系列的硬件自动调用了 interrupt_global_disable(); 来拒绝响应任何的中断，因此需要我们自己手动调用 interrupt_global_enable(0); 来开启中断的响应。
 
@@ -46,6 +47,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr, 0, CCU6_0_CH0_ISR_PRIORITY)
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU60_CH0);
 
+    //按键中断
     keyProcess();
 
 }
@@ -56,41 +58,63 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU60_CH1);
 
+    /*获取编码器信息*/
     encoder_data_4 = encoder_get_count(ENCODER_4);                              // 获取编码器计数
     encoder_clear_count(ENCODER_4);                                             // 清空编码器计数
 
     encoder_data_2 = - encoder_get_count(ENCODER_2);                              // 获取编码器计数
     encoder_clear_count(ENCODER_2);                                             // 清空编码器计数
 
-    encoder_data_4_ = 0.9 * encoder_data_4_ + 0.1 * encoder_data_4;
-    encoder_data_2_ = 0.9 * encoder_data_2_ + 0.1 * encoder_data_2;
+//    encoder_data_2_temp = encoder_data_2;
+//    encoder_data_4_temp = encoder_data_4;
 
-    PID_Motor(&pid_speed_r, encoder_data_4_);
-    PID_Motor(&pid_speed_l, encoder_data_2_);
+    /*对编码器结果进行一阶低通滤波*/
+    encoder_data_4 = filter_r(encoder_data_4);
+    encoder_data_2 = filter_l(encoder_data_2);
 
-    if (pid_speed_r.actual_val >= 0)
-    {
-        pwm_set_duty(PWM_R, pid_speed_r.actual_val);                  // 计算占空比
-    } else
-    {
-        pwm_set_duty(PWM_R, -pid_speed_r.actual_val);                  // 计算占空比
-    }
+//    sprintf(textDisplay, "%.2f,%.2f,%.2f,%.2f\n",\
+//            (float)encoder_data_2, (float)encoder_data_4, (float)encoder_data_2_temp, (float)encoder_data_4_temp);
+//    wireless_uart_send_string(textDisplay);
 
-    if (pid_speed_l.actual_val >= 0)
-    {
-        pwm_set_duty(PWM_L, pid_speed_l.actual_val);                  // 计算占空比
-    } else
-    {
-        pwm_set_duty(PWM_L, -pid_speed_l.actual_val);                  // 计算占空比
-    }
+
+    PID_Motor(&pid_speed_r, encoder_data_4);
+    PID_Motor(&pid_speed_l, encoder_data_2);
+
+//    if (pid_speed_r.actual_val >= 0)
+//    {
+//        pwm_set_duty(PWM_R, pid_speed_r.actual_val);                  // 计算占空比
+//    } else
+//    {
+//        pwm_set_duty(PWM_R, -pid_speed_r.actual_val);                  // 计算占空比
+//    }
+//
+//    if (pid_speed_l.actual_val >= 0)
+//    {
+//        pwm_set_duty(PWM_L, pid_speed_l.actual_val);                  // 计算占空比
+//    } else
+//    {
+//        pwm_set_duty(PWM_L, -pid_speed_l.actual_val);                  // 计算占空比
+//    }
+//
+    motorLeftWrite(pid_speed_l.output);
+    motorRightWrite(pid_speed_r.output);
+
 }
 
+float speed_target;
+#define PI 3.14159
 IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
 {
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
 
+    static int16_t index = 0;
+    speed_target = 100.0 * sin(2 * PI * index / (float)400.0);
+    index += 1;
+    if (index >= 400) index = 0;
 
+    pid_speed_r.target_val = speed_target;
+    pid_speed_l.target_val = speed_target;
 
 
 }

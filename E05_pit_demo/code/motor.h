@@ -24,5 +24,7 @@ extern uint16_t dutyR;              //右侧电机占空比
 
 
 void motorInit(void);               //电机初始化
+void motorLeftWrite(int16_t compare);
+void motorRightWrite(int16_t compare);
 
 #endif /* CODE_MOTOR_H_ */

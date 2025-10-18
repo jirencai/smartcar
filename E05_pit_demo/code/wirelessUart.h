@@ -20,6 +20,6 @@
 extern char textDisplay[];
 void wirelessUartInit(void);
 void wirelessUartDisplay(void);
-
+void wirelessUartReceive(void);
 
 #endif /* CODE_WIRELESSUART_H_ */

@@ -30,6 +30,44 @@ void motorInit(void)
     gpio_init(DIR_L, GPO, GPIO_HIGH, GPO_PUSH_PULL);                           // GPIO 初始化为输出 默认上拉输出高
     pwm_init(PWM_L, 17000, 0);                                                 // PWM 通道初始化频率 17KHz 占空比初始为 0
 }
+/*左侧电机占空比的写入*/
+void motorLeftWrite(int16_t compare)
+{
+    if (compare >= 0)
+    {
+        if (gpio_get_level(DIR_L) == 0)
+        {
+            gpio_set_level(DIR_L, 1);
+        }
+        pwm_set_duty(PWM_L, compare);
+    } else
+    {
+        if (gpio_get_level(DIR_L) == 1)
+        {
+            gpio_set_level(DIR_L, 0);
+        }
+        pwm_set_duty(PWM_L, -compare);
+    }
+}
+/*右侧电机占空比的写入*/
+void motorRightWrite(int16_t compare)
+{
+    if (compare >= 0)
+    {
+        if (gpio_get_level(DIR_R) == 1)
+        {
+            gpio_set_level(DIR_R, 0);
+        }
+        pwm_set_duty(PWM_R, compare);
+    } else
+    {
+        if (gpio_get_level(DIR_R) == 0)
+        {
+            gpio_set_level(DIR_R, 1);
+        }
+        pwm_set_duty(PWM_R, -compare);
+    }
+}
 
 
 

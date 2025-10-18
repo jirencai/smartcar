@@ -43,7 +43,7 @@
 //定时中断宏定义
 #define KEYGET                  (CCU60_CH0 )                                     // 使用的周期中断编号
 #define ENCODERTIM              (CCU60_CH1 )
-
+#define SIN                     (CCU61_CH0 )
 int core0_main(void)
 {
     clock_init();                   // 获取时钟频率<务必保留>
@@ -51,15 +51,20 @@ int core0_main(void)
     // 此处编写用户代码 例如外设初始化代码等
 
     pit_ms_init(KEYGET, 20);                                                   // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
+    pit_ms_init(SIN, 25);                                                       // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
 
     motorInit();                //电机初始化
     keyInit();                  //按键初始化
 //    ips200Init();             //屏幕初始化
     wirelessUartInit();         //无线串口初始化
 
+
+    /*编码器及其中断初始化*/
     encoderInit();              //编码器初始化
     pit_ms_init(ENCODERTIM, 2);                                              // 初始化 CCU6_0_CH1 为周期中断 2ms 周期
 
+    /*低通滤波器初始化*/
+    low_pass_filter_Init();     //低通滤波器初始化
 
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
@@ -69,6 +74,7 @@ int core0_main(void)
         // 此处编写需要循环执行的代码
 	    keyScan();
 	    wirelessUartDisplay();
+//	    wirelessUartReceive();
         // 此处编写需要循环执行的代码
 	}
 }
