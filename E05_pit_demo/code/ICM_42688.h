@@ -1,6 +1,8 @@
 #ifndef __ICM_42688_H
 #define __ICM_42688_H
 
+#include "zf_common_headfile.h"
+
 // ICM42688管脚宏定义
 #define ICM42688_SPI_SPEED      (24*1000*1000)      // 硬件SPI速率
 #define ICM42688_SPI            (SPI_0)             // 硬件SPI号

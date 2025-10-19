@@ -62,7 +62,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
     encoder_data_4 = encoder_get_count(ENCODER_4);                              // 获取编码器计数
     encoder_clear_count(ENCODER_4);                                             // 清空编码器计数
 
-    encoder_data_2 = - encoder_get_count(ENCODER_2);                              // 获取编码器计数
+    encoder_data_2 = - encoder_get_count(ENCODER_2);                            // 获取编码器计数
     encoder_clear_count(ENCODER_2);                                             // 清空编码器计数
 
 //    encoder_data_2_temp = encoder_data_2;
@@ -80,29 +80,14 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
     PID_Motor(&pid_speed_r, encoder_data_4);
     PID_Motor(&pid_speed_l, encoder_data_2);
 
-//    if (pid_speed_r.actual_val >= 0)
-//    {
-//        pwm_set_duty(PWM_R, pid_speed_r.actual_val);                  // 计算占空比
-//    } else
-//    {
-//        pwm_set_duty(PWM_R, -pid_speed_r.actual_val);                  // 计算占空比
-//    }
-//
-//    if (pid_speed_l.actual_val >= 0)
-//    {
-//        pwm_set_duty(PWM_L, pid_speed_l.actual_val);                  // 计算占空比
-//    } else
-//    {
-//        pwm_set_duty(PWM_L, -pid_speed_l.actual_val);                  // 计算占空比
-//    }
-//
+
     motorLeftWrite(pid_speed_l.output);
     motorRightWrite(pid_speed_r.output);
 
 }
 
 float speed_target;
-#define PI 3.14159
+//#define PI 3.14159
 IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
 {
     interrupt_global_enable(0);                     // 开启中断嵌套
