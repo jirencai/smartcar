@@ -20,8 +20,8 @@ uint8 Image_Processing=0;//0:未使用 1:正在处理 2:处理已完成
 
 
 /*摄像头参数*/
-float deltax = 4.2f;
-float height = 37.5f;
+float deltax = 2.0f;
+float height = 30.0f;
 float cam_angle = 60.5f;
 float alpha = 50.7f;
 
