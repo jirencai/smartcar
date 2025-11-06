@@ -1,26 +1,26 @@
 /*
- * cirlce.c
+ * circle.c
  *
- *  Created on: 2025Äê11ÔÂ5ÈÕ
+ *  Created on: 2025ï¿½ï¿½11ï¿½ï¿½5ï¿½ï¿½
  *      Author: ji_rencai
  */
 
 #include "circle.h"
 
-/*±àÂëÆ÷²¿·Ö£¬·ÀÖ¹Ò»Ð©ÖØ¸´´¥·¢*/
-float circle_encoder;                           //Ô²»·Ðý×ª½Ç±àÂëÆ÷¼ÆÊý
-float circle_Yaw;                               //Ô²»·Ðý×ª½Ç
-float circle_lenout=0.3;                        //±àÂëÆ÷ÅÐ¶Ï½á¹û£¨ÓÐ´ýÉÌÈ¶£©
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½Ö¹Ò»Ð©ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½*/
+float circle_encoder;                           //Ô²ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+float circle_Yaw;                               //Ô²ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
+float circle_lenout=0.3;                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½È¶ï¿½ï¿½
 
 
 enum circle_type_e circle_type = CIRCLE_NONE;
 
-uint8 circle_cnt0 = 0;                          //×ó±ßÏßÎÞÔ²»·¼ÆÊý
-uint8 circle_cnt1 = 0;                          //ÓÒ±ßÏßÎÞÔ²»·¼ÆÊý
+uint8 circle_cnt0 = 0;                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+uint8 circle_cnt1 = 0;                          //ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-/*¼ì²é×óÔ²»·ºÍÓÒÔ²»·*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½*/
 void check_circle(void) {
-    // ·ÇÔ²»·Ä£Ê½ÏÂ£¬µ¥±ßL½Çµã(ÇÒ½ÇµãÏòÏÂÕÅ¿ª), µ¥±ß³¤Ö±µÀ
+    // ï¿½ï¿½Ô²ï¿½ï¿½Ä£Ê½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½Çµï¿½(ï¿½Ò½Çµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¿ï¿½), ï¿½ï¿½ï¿½ß³ï¿½Ö±ï¿½ï¿½
     if (circle_type == CIRCLE_NONE && Lpt0_found<0 && !Lpt1_found && is_straight1 && abs(Lpt0_found) < 2 && rpts0s[clip(Lpt0_rpts0s_id1+20,Lpt0_rpts0s_id1,rpts0s_num)][0]-rpts0s[Lpt0_rpts0s_id1][0]<-10 && rpts0s[Lpt0_rpts0s_id1][1] < 65) {
 //        if(rpts0s[clip(Lpt0_rpts0s_id1+20,Lpt0_rpts0s_id1,rpts0s_num)][0]-rpts0s[Lpt0_rpts0s_id1][0]>-10)return;
         circle_cnt0++;
@@ -44,16 +44,16 @@ void check_circle(void) {
     }
 //    dispf(4,circle_Yaw,"circle_Yaw");
 }
-#define none_line_thres 0.15f                       //Ð¡ÓÚ¸Ã³¤¶ÈÅÐ¶¨Îª¶ªÏß
-#define have_line_thres 0.5f                        //´óÓÚ¸Ã³¤¶ÈÅÐ¶¨ÎªÓÐÏß
-int none_left_line = 0, none_right_line = 0;        //×ó±ßÏß¶ªÊ§ºÍÓÒ±ßÏß¶ªÊ§
-int have_left_line = 0, have_right_line = 0;        //×ó±ßÏßÕÒµ½ºÍÓÒ±ßÏßÕÒµ½
-uint8 Circle_In_Ready=0;                            //½øÈëÔ²»·×¼±¸
+#define none_line_thres 0.15f                       //Ð¡ï¿½Ú¸Ã³ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½
+#define have_line_thres 0.5f                        //ï¿½ï¿½ï¿½Ú¸Ã³ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½
+int none_left_line = 0, none_right_line = 0;        //ï¿½ï¿½ï¿½ï¿½ß¶ï¿½Ê§ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ß¶ï¿½Ê§
+int have_left_line = 0, have_right_line = 0;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Òµï¿½
+uint8 Circle_In_Ready=0;                            //ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½×¼ï¿½ï¿½
 
-/*Ô²»·½øÐÐÊ±*/
+/*Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±*/
 void run_circle() {
 //    now_aim_distance = 0.45;
-    static uint32_t circle_begin_start_time = 0; // ¼ÇÂ¼½øÈë¸Ã×´Ì¬µÄÆðÊ¼Ê±¼ä£¨µ¥Î»£ºÃë£©
+    static uint32_t circle_begin_start_time = 0; // ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Ê¼Ê±ï¿½ä£¨ï¿½ï¿½Î»ï¿½ï¿½ï¿½ë£©
 
     if (circle_type == CIRCLE_LEFT_BEGIN || circle_type == CIRCLE_RIGHT_BEGIN)
     {
@@ -62,25 +62,25 @@ void run_circle() {
             circle_type = CIRCLE_NONE;
             return;
         }
-        // Èç¹û¸Õ½øÈë¸Ã×´Ì¬£¬¼ÇÂ¼µ±Ç°Ê±¼ä
+        // ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ç°Ê±ï¿½ï¿½
         if (circle_begin_start_time == 0)
         {
             circle_begin_start_time = fre_cy.time;
         }
-        // Èç¹ûµ±Ç°×´Ì¬³ÖÐø³¬¹ý2Ãë£¬Ôò³¬Ê±´¦Àí
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ë£¬ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
         if (fre_cy.time - circle_begin_start_time >= 3 || (is_long_straight0 && is_long_straight1)) {
             circle_type = CIRCLE_NONE;
-            circle_begin_start_time = 0; // ÖØÖÃ¶¨Ê±Æ÷
-            return; // Ö±½Ó·µ»Ø£¬±ÜÃâºóÐø×´Ì¬´¦Àí
+            circle_begin_start_time = 0; // ï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½
+            return; // Ö±ï¿½Ó·ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
         }
     }
     else
     {
-        // µ±²»´¦ÓÚÉÏÊöÁ½ÖÖ×´Ì¬Ê±£¬Çå¿Õ¶¨Ê±Æ÷±äÁ¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬Ê±ï¿½ï¿½ï¿½ï¿½Õ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         circle_begin_start_time = 0;
     }
 
-    // ×ó»·¿ªÊ¼£¬Ñ°ÍâÖ±µÀÓÒÏß
+    // ï¿½ó»·¿ï¿½Ê¼ï¿½ï¿½Ñ°ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (circle_type == CIRCLE_LEFT_BEGIN)
     {
 //        Set_Speed_Key(now_using_map,circle_begin);
@@ -89,7 +89,7 @@ void run_circle() {
         track_route = TRACK_RIGHT;
         if (Lpt0_found<0 && is_straight1)circle_encoder = Total_mileage;
         if(!none_left_line && is_straight1)circle_Yaw = 0.5f * (circle_Yaw + Yaw_a + Rad2Ang*get_straight_yaw(1));
-        //ÏÈ¶ª×óÏßºóÓÐÏß
+        //ï¿½È¶ï¿½ï¿½ï¿½ï¿½ßºï¿½ï¿½ï¿½ï¿½ï¿½
         if (rpts0s_num < none_line_thres / sample_dist) { none_left_line++; }
         if ((Lpt0_found==0 && rpts0s_num > have_line_thres / sample_dist && none_left_line > 2)||Total_mileage-circle_encoder> circle_lenout) {
             have_left_line++;
@@ -105,37 +105,37 @@ void run_circle() {
             }
         }
     }
-    //Èë»·£¬Ñ°ÄÚÔ²×óÏß
+    //ï¿½ë»·ï¿½ï¿½Ñ°ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½
     else if (circle_type == CIRCLE_LEFT_IN) {
         track_route = TRACK_LEFT;
-        //±àÂëÆ÷´ò±í¹ý1/4Ô²   Ó¦ÐÞÕýÎªÓÒÏßÎª×ªÍäÎÞ¹Õµã
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1/4Ô²   Ó¦ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Îª×ªï¿½ï¿½ï¿½Þ¹Õµï¿½
         if ((/*(rpts1s_num < 0.1 / sample_dist && current_encoder - circle_encoder >= ENCODER_PER_METER * 0.3f )  ||*/
 //            current_encoder - circle_encoder >= ENCODER_PER_METER_f * 3.14f * 0.5f
             get_yaw_error(circle_Yaw)>90.0f) && !infinite_circle) { circle_type = CIRCLE_LEFT_RUNNING; }
     }
-    //Õý³£Ñ²Ïß£¬Ñ°ÍâÔ²ÓÒÏß
+    //ï¿½ï¿½ï¿½ï¿½Ñ²ï¿½ß£ï¿½Ñ°ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½
     else if (circle_type == CIRCLE_LEFT_RUNNING) {
         track_route = TRACK_RIGHT;
-//        if (Lpt1_found) rpts1s_use = Lpt1_rpts1s_id1;//Íâ»·¹Õµã(ÓÒLµã)
+//        if (Lpt1_found) rpts1s_use = Lpt1_rpts1s_id1;//ï¿½â»·ï¿½Õµï¿½(ï¿½ï¿½Lï¿½ï¿½)
         if (Lpt1_found) {  //&& Lpt1_rpts1s_id1 < (now_aim_distance) / sample_dist
             circle_type = CIRCLE_LEFT_OUT;
         }
     }
-    //³ö»·£¬Ñ°ÄÚÔ²
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½Ô²
     else if (circle_type == CIRCLE_LEFT_OUT) {
         track_route = TRACK_LEFT;
 
-        //ÓÒÏßÎª³¤Ö±µÀ
+        //ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ö±ï¿½ï¿½
         if (is_straight1) {
             circle_type = CIRCLE_LEFT_END;
 //            Set_Speed_Key(now_using_map,circle_end);
         }
     }
-    //×ß¹ýÔ²»·£¬Ñ°ÓÒÏß
+    //ï¿½ß¹ï¿½Ô²ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½
     else if (circle_type == CIRCLE_LEFT_END) {
         track_route = TRACK_RIGHT;
 
-        //×óÏßÏÈ¶ªºóÓÐ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½
         if (rpts0s_num < none_line_thres / sample_dist) { none_left_line++; }
         if (rpts0s_num > have_line_thres / sample_dist && none_left_line > 3) {
             circle_type = CIRCLE_NONE;
@@ -143,7 +143,7 @@ void run_circle() {
             Extra_search_path = true;
         }
     }
-    //ÓÒ»·¿ØÖÆ£¬Ç°ÆÚÑ°×óÖ±µÀ
+    //ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ç°ï¿½ï¿½Ñ°ï¿½ï¿½Ö±ï¿½ï¿½
     else if (circle_type == CIRCLE_RIGHT_BEGIN) {
 //        quit_time = fre_cy.time;
 //        if(fre_cy.time - quit_time > 2){
@@ -156,7 +156,7 @@ void run_circle() {
 //        if(none_left_line&&(!have_left_line))
             Extra_search_path = false;
         if(!none_right_line && is_straight0) circle_Yaw = 0.5f * (circle_Yaw + Yaw_a + Rad2Ang*get_straight_yaw(-1));
-        //ÏÈ¶ªÓÒÏßºóÓÐÏß
+        //ï¿½È¶ï¿½ï¿½ï¿½ï¿½ßºï¿½ï¿½ï¿½ï¿½ï¿½
         if (rpts1s_num < none_line_thres / sample_dist) { none_right_line++; }
         if ((Lpt1_found==0 && rpts1s_num > have_line_thres / sample_dist && none_right_line > 2)||Total_mileage-circle_encoder> circle_lenout) {
             have_right_line++;
@@ -173,42 +173,42 @@ void run_circle() {
             }
         }
     }
-    //ÈëÓÒ»·£¬Ñ°ÓÒÄÚÔ²»·
+    //ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
     else if (circle_type == CIRCLE_RIGHT_IN) {
         track_route = TRACK_RIGHT;
 
-        //±àÂëÆ÷´ò±í¹ý1/4Ô²   Ó¦ÐÞÕýÎª×óÏßÎª×ªÍäÎÞ¹Õµã
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1/4Ô²   Ó¦ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Îª×ªï¿½ï¿½ï¿½Þ¹Õµï¿½
         if ((/*( rpts1s_num < 0.1 / sample_dist && current_encoder - circle_encoder >= ENCODER_PER_METER * 0.3f ) ||*/
             get_yaw_error(circle_Yaw)<(-90.0f)
 //            ||current_encoder - circle_encoder >= ENCODER_PER_METER_f * 3.14f * 0.5f
             ) && !infinite_circle) { circle_type = CIRCLE_RIGHT_RUNNING; }
 
     }
-    //Õý³£Ñ²Ïß£¬Ñ°ÍâÔ²×óÏß
+    //ï¿½ï¿½ï¿½ï¿½Ñ²ï¿½ß£ï¿½Ñ°ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½
     else if (circle_type == CIRCLE_RIGHT_RUNNING) {
         track_route = TRACK_LEFT;
 
-        //Íâ»·´æÔÚ¹Õµã,¿ÉÔÙ¼Ó¹Õµã¾àÀëÅÐ¾Ý(×óLµã)
+        //ï¿½â»·ï¿½ï¿½ï¿½Ú¹Õµï¿½,ï¿½ï¿½ï¿½Ù¼Ó¹Õµï¿½ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½(ï¿½ï¿½Lï¿½ï¿½)
 //        if (Lpt0_found) rpts0s_use = Lpt0_rpts0s_id1;
         if (Lpt0_found) { //&& Lpt0_rpts0s_id1 < (now_aim_distance) / sample_dist
             circle_type = CIRCLE_RIGHT_OUT;
         }
     }
-    //³ö»·£¬Ñ°ÄÚÔ²
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½Ô²
     else if (circle_type == CIRCLE_RIGHT_OUT) {
         track_route = TRACK_RIGHT;
 
-        //×ó³¤¶È¼ÓÇãÐ±½Ç¶È  Ó¦ÐÞÕý×óÓÒÏßÕÒµ½ÇÒÎªÖ±Ïß
+        //ï¿½ó³¤¶È¼ï¿½ï¿½ï¿½Ð±ï¿½Ç¶ï¿½  Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ÎªÖ±ï¿½ï¿½
         //if((rpts1s_num >100 && !Lpt1_found))  {have_right_line++;}
         if (is_straight0) {
             circle_type = CIRCLE_RIGHT_END;
         }
     }
-        //×ß¹ýÔ²»·£¬Ñ°×óÏß
+        //ï¿½ß¹ï¿½Ô²ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½
     else if (circle_type == CIRCLE_RIGHT_END) {
         track_route = TRACK_LEFT;
 
-        //ÓÒÏßÏÈ¶ªºóÓÐ,
+        //ï¿½ï¿½ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½,
         if (rpts1s_num < none_line_thres / sample_dist) { none_right_line++; }
         if (rpts1s_num > have_line_thres  / sample_dist && none_right_line > 2) {
             circle_type = CIRCLE_NONE;
