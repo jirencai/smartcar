@@ -37,6 +37,9 @@
 #pragma section all "cpu0_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU0的RAM中
 
+uint8_t new_image[MT9V03X_H][MT9V03X_W];
+uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
+
 #define LED1                    (P20_9)
 #define LED2                    (P20_8)
 

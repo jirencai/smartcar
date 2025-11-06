@@ -38,8 +38,6 @@
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
 
 
-uint8_t new_image[MT9V03X_H][MT9V03X_W];
-uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
 uint8 no_line_cnt=0,straight_cnt=0;         //无边线计数
 uint16_t testNum = 0;
 
