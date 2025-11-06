@@ -10,6 +10,10 @@
 int clip(int x, int low, int up) {return x > up ? up : x < low ? low : x;}
 float fclip(float x, float low, float up) {return x > up ? up : x < low ? low : x;}
 
+/*屏幕显示参数*/
+uint8_t show_flag = 0;
+
+
 /*图像处理进程*/
 uint8 Image_Processing=0;//0:未使用 1:正在处理 2:处理已完成
 

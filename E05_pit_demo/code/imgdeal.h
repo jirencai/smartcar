@@ -19,6 +19,7 @@ typedef struct image {
 
 extern uint8_t new_image1[MT9V03X_H][MT9V03X_W];            //对cpu1中的new_image1进行声明
 extern image_t img_raw,img_OSTU,img_line;                   //对image_t结构体的声明
+extern uint8_t img_line_data[MT9V03X_H][MT9V03X_W];
 
 extern int offset;                                          //补偿参数
 
@@ -48,6 +49,12 @@ float get_yaw_error(float ref);
 
 void find_nearest_dist(float x0, float y0, float points[][2], int serch_range, float* result_dist, float min_dist);
 
+/*图像绘制函数*/
+uint8 float_line_to_img(image_t *img, float line[][2], uint16 len);
+void clear_image(image_t *img);
+void SetImg_MoveAndZoom(float move, float zoom);
+void draw_x(image_t *img, int x, int y, int len, uint8_t value);
+void draw_o(image_t *img, int x, int y, int radius, uint8_t value);
 
 #endif
 

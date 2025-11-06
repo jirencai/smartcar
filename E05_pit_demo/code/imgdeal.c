@@ -11,6 +11,12 @@
 
 image_t img_raw = DEF_IMAGE(new_image1, IMAGEW, IMAGEH);  //(mt9v03x_image, IMAGEW, IMAGEH)
 image_t img_OSTU = DEF_IMAGE(&new_image1[59], IMAGEW, IMAGEH - 60);
+
+uint8_t img_line_data[IMAGEH][IMAGEW];
+image_t img_line = DEF_IMAGE(img_line_data, IMAGEW, IMAGEH);
+
+float Img_Zoom=1, Img_Move=0;                   //图像平移和缩放参数
+
 volatile int thres_use0, thres_use1;            //左边线阈值和右边线阈值
 int offset = 0;                                 //补偿参数
 
@@ -511,6 +517,81 @@ float get_yaw_error(float ref){
     return Error;
 }
 
+/*
+ * 图像绘制
+ * 将数组中的点绘制到图像中
+ * *img 传递的图像地址
+ * line[][2] 点集坐标
+ * len 点集个数
+ */
+uint8 float_line_to_img(image_t *img, float line[][2], uint16 len){
+    int x,y;
+    for(uint16 i = 0; i < len; i++){
+//        if(!Image_Processing) return 1;//边线正被使用，画线中止
+        x = Img_Zoom*(line[i][0]-94.0f)+94.0f;
+        y = Img_Zoom*(line[i][1]-120.0f-Img_Move)+120.0f;
+        if(x<=0||x>=img->width||y<=0||y>=img->height)continue;
+        AT_IMAGE(img, x, y)=255;
+    }
+    return 0;//处理成功
+}
+/*
+ * 图像清理函数
+ * img 传递的图像地址
+ */
+void clear_image(image_t *img) {
+//    assert(img && img->data);
+    memset(img->data[0], 0, img->height * img->width);
+//    if (IMAGEW == img->step) {
+//        memset(img->data, 0, IMAGEW * IMAGEH);
+//    } else {
+//        for (int y = 0; y < IMAGEH; y++) {
+//            memset(&AT(img, 0, y), 0, IMAGEW);
+//        }
+//    }
+}
+/*
+ * 图像平移和缩放初始化函数
+ * move 平移参数
+ * zoom 缩放参数
+ */
+void SetImg_MoveAndZoom(float move, float zoom){
+    Img_Move = move;
+    Img_Zoom = zoom;
+}
+/*
+ * 绘制×
+ * img 传递的图像地址
+ * x 绘制点的横坐标
+ * y 绘制点的纵坐标
+ * len ×的大小
+ * value ×的颜色
+ */
+void draw_x(image_t *img, int x, int y, int len, uint8_t value)
+{
+    x = Img_Zoom*(x-94)+94;
+    y = Img_Zoom*(y-120-Img_Move)+120;
+    for (int i = -len; i <= len; i++) {
+            AT(img, clip(x + i, 0, IMAGEW - 1), clip(y + i, 0, IMAGEH - 1)) = value;
+            AT(img, clip(x - i, 0, IMAGEW - 1), clip(y + i, 0, IMAGEH - 1)) = value;
+    }
+}
+/*
+ * 绘制o
+ * img 传递的图像地址
+ * x 绘制点的横坐标
+ * y 绘制点的纵坐标
+ * len o的大小
+ * value o的颜色
+ */
+void draw_o(image_t *img, int x, int y, int radius, uint8_t value)
+{
+    x = Img_Zoom*(x-94)+94;
+    y = Img_Zoom*(y-120-Img_Move)+120;
+    for (float i = -PI; i <= PI; i += PI / 10) {
+            AT(img, clip(x + radius * cosf(i), 0, IMAGEW - 1), clip(y + radius * sinf(i), 0, IMAGEH - 1)) = value;
+    }
+}
 //返回x0,y0到points数组中最短点的距离
 void find_nearest_dist(float x0, float y0, float points[][2], int serch_range, float* result_dist, float min_dist){
 //    *result_dist = -1;

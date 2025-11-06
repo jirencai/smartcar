@@ -49,6 +49,9 @@ extern float pixel_per_meter;                       // ¸©ÊÓÍ¼ÖĞÏñËØÓëÊµ¼Êµ¥Î»µÄ×
 extern float sample_dist;                           // ±ßÏßµÈ¾à²ÉÑùµÄ¼ä¾à
 extern float angle_dist;                            // ¼ÆËã±ßÏß×ª½ÇÊ±£¬Èı¸ö¼ÆËãµãµÄ¾àÀë
 
+/*ÆÁÄ»ÏÔÊ¾²ÎÊı*/
+extern uint8_t show_flag;
+
 /*Í¼Ïñ´¦ÀíÖĞµÄ²ÎÊı*/
 #define POINTS_MAX_LEN     (180)                    //Â·¾¶µã×î´óÊıÁ¿
 #define FAR_POINTS_MAX_LEN (120)                    //Ô¶µãÂ·¾¶µã×î´óÊıÁ¿

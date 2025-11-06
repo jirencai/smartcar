@@ -131,6 +131,7 @@
 #include "ICM.h"
 #include "IPM.h"
 #include "isr.h"
+#include "screenDisplay.h"
 
 #include "cross.h"
 #include "garage.h"

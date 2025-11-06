@@ -37,6 +37,8 @@
 #pragma section all "cpu1_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
 
+
+uint8_t new_image[MT9V03X_H][MT9V03X_W];
 uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
 uint8 no_line_cnt=0,straight_cnt=0;         //无边线计数
 uint16_t testNum = 0;
@@ -87,7 +89,7 @@ void core1_main(void)
         {
 //            ips200_show_int(3, 16, testNum, 5);
 //            testNum += 1;
-            ips200_displayimage03x((const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H);                       // 显示原始图像
+//            ips200_displayimage03x((const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H);                       // 显示原始图像
 //            ips200_show_gray_image(0, 0, (const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H, 240, 180, 64);     // 显示二值化图像
             undistortImage(mt9v03x_image, new_image1);              //图像去畸变
             process_image();                                        //边线处理和提取
@@ -105,9 +107,7 @@ void core1_main(void)
 
             find_corner();     // 角点提取&筛选
 
-            drawleftline();
-            drawrightline();
-
+            displayProcess();
             mt9v03x_finish_flag = 0;
         }
 
