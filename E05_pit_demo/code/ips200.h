@@ -23,6 +23,8 @@
 
 
 void ips200Init(void);
+void drawleftline(void);//»­×ó±ßÏß
+void drawrightline(void);//»­ÓÒ±ßÏß
 
 
 #endif /* CODE_IPS200_H_ */

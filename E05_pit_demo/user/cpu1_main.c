@@ -37,6 +37,9 @@
 #pragma section all "cpu1_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
 
+uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
+uint8 no_line_cnt=0,straight_cnt=0;         //无边线计数
+uint16_t testNum = 0;
 
 // 工程导入到软件之后，应该选中工程然后点击refresh刷新一下之后再编译
 // 工程默认设置为关闭优化，可以自己右击工程选择properties->C/C++ Build->Setting
@@ -57,33 +60,58 @@ void core1_main(void)
 //    ips200_init(IPS200_TYPE_SPI);        //屏幕初始化
 //    ips200_clear();
 //
-//    ips200_show_string(0, 0, "mt9v03x init.");
-//    while(1)
-//    {
-//        if(mt9v03x_init())
-//            ips200_show_string(0, 80, "mt9v03x reinit.");
-//        else
-//            break;
-//        system_delay_ms(500);                                                   // 短延时快速闪灯表示异常
-//    }
-//    ips200_show_string(0, 16, "init success.");
-//
-//
+    ips200Init();             //屏幕初始化
+
+    ips200_show_string(0, 0, "mt9v03x init.");
+    while(1)
+    {
+        if(mt9v03x_init())
+            ips200_show_string(0, 80, "mt9v03x reinit.");
+        else
+            break;
+        system_delay_ms(500);                                                   // 短延时快速闪灯表示异常
+    }
+    ips200_show_string(0, 16, "init success.");
+//    mt9v03x_set_exposure_time(30);
+
+
 
     // 此处编写用户代码 例如外设初始化代码等
 
     cpu_wait_event_ready();                 // 等待所有核心初始化完毕
     while (TRUE)
     {
-        // 此处编写需要循环执行的代码
-//        if(mt9v03x_finish_flag)
-//        {
-//            ips200_displayimage03x((const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H);                       // 显示原始图像
-////            ips200_show_gray_image(0, 0, (const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H, 240, 180, 64);     // 显示二值化图像
-//            mt9v03x_finish_flag = 0;
-//        }
-//
-//
+
+//         此处编写需要循环执行的代码
+        if(mt9v03x_finish_flag)
+        {
+//            ips200_show_int(3, 16, testNum, 5);
+//            testNum += 1;
+            ips200_displayimage03x((const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H);                       // 显示原始图像
+//            ips200_show_gray_image(0, 0, (const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H, 240, 180, 64);     // 显示二值化图像
+            undistortImage(mt9v03x_image, new_image1);              //图像去畸变
+            process_image();                                        //边线处理和提取
+            if(rpts0s_num<5 && rpts1s_num<5)
+            {  //无边线状态计数器
+                if(no_line_cnt<200)no_line_cnt++;
+            }
+            else
+            {
+                if(no_line_cnt>=0)no_line_cnt--;
+            }
+//                if(no_line_cnt > 15) Dynamic_begin_x = 0;
+//                else Dynamic_begin_x = 1;
+
+
+            find_corner();     // 角点提取&筛选
+
+            drawleftline();
+            drawrightline();
+
+            mt9v03x_finish_flag = 0;
+        }
+
+
 
 
         // 此处编写需要循环执行的代码

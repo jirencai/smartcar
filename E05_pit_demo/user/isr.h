@@ -38,6 +38,40 @@
 
 #include "zf_common_headfile.h"
 
+typedef struct
+{
+    uint16_t imgcount;
+    uint16_t steercount;
+    uint16_t motercount;
+    uint16_t _42688count;
+    uint16_t Uartcount;
+
+    uint16_t imgHz;
+    uint16_t steerHz;
+    uint16_t moterHz;
+    uint16_t _42688Hz;
+    uint16_t UartHz;
+
+    uint32_t imgtime1;
+    uint32_t imgtime2;
+    uint32_t steertime1;
+    uint32_t steertime2;
+    uint32_t motertime1;
+    uint32_t motertime2;
+    uint32_t _42688time1;
+    uint32_t _42688time2;
+    uint32_t Uarttime1;
+    uint32_t Uarttime2;
+
+    uint32_t img_begin_time;
+    uint32_t img_end_time;
+    uint32_t begin_to_end_time;
+
+    uint32_t time;
+    uint32_t m10stime;
+    uint16_t count;
+}frequency;
+extern frequency fre_cy; // 声明外部变量
 
 
 

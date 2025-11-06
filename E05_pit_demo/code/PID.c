@@ -27,7 +27,15 @@ pidTypedef pid_speed_l = {
         1000.0,
         0, 0, 0, 100.0
 };
-
+pidTypedef pid_gyro = {
+        0,
+        0, 0, 0, 0, 0,
+        0, 0, 0,
+        0, 80, 0.5, 0,
+        10, 0.1,
+        1000.0,
+        0, 0, 0, 100.0
+};
 /*位置式PID电机算法*/
 void PID_Motor(pidTypedef *p,float nowSpeed)//电机转速pid
 {

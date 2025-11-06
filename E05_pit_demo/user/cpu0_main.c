@@ -73,9 +73,10 @@ int core0_main(void)
 
         // 此处编写需要循环执行的代码
 	    keyScan();
-	    wirelessUartDisplay();
+//	    wirelessUartDisplay();
 //	    wirelessUartReceive();
         // 此处编写需要循环执行的代码
+
 	}
 }
 

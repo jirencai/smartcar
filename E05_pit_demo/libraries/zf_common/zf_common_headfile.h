@@ -126,7 +126,19 @@
 #include "PID.h"
 #include "ICM_42688.h"
 #include "filter.h"
+#include "imgdeal.h"
+#include "extern.h"
+#include "ICM.h"
+#include "IPM.h"
+#include "isr.h"
+
+#include "cross.h"
+#include "garage.h"
+#include "circle.h"
+
 //=====================================================”√ªß≤„======================================================
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 #endif
 
