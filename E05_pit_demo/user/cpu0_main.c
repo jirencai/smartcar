@@ -50,8 +50,6 @@ int core0_main(void)
     debug_init();                   // 初始化默认调试串口
     // 此处编写用户代码 例如外设初始化代码等
 
-    pit_ms_init(KEYGET, 20);                                                   // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
-    pit_ms_init(SIN, 25);                                                       // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
 
     motorInit();                //电机初始化
     keyInit();                  //按键初始化
@@ -62,6 +60,8 @@ int core0_main(void)
     /*编码器及其中断初始化*/
     encoderInit();              //编码器初始化
     pit_ms_init(ENCODERTIM, 2);                                              // 初始化 CCU6_0_CH1 为周期中断 2ms 周期
+    pit_ms_init(KEYGET, 20);                                                   // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
+    pit_ms_init(SIN, 25);                                                       // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
 
     /*低通滤波器初始化*/
     low_pass_filter_Init();     //低通滤波器初始化
