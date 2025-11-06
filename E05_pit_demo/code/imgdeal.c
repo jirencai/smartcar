@@ -325,6 +325,57 @@ void find_corner(void)
         if (/*Ypt0_found == true &&*/ abs(Lpt0_found)==2 && is_straight0 == false) break;
     }
 
+    for (sint16 i = dist; i < rpts1s_num-dist; i++)
+    {
+        if (rpts1an[i] == 0) continue;
+        int im1 = clip(i - dist, 0, rpts1s_num - 1);
+        int ip1 = clip(i + dist, 0, rpts1s_num - 1);
+        float conf = fabs(rpts1a[i])- (fabs(rpts1a[im1]) + fabs(rpts1a[ip1])) / 2;
+//        if (Ypt1_found == false && 30. / 180. * PI < conf && conf < 65. / 180. * PI && i < 0.8 / sample_dist) {
+//            Ypt1_rpts1s_id = i;
+//            Ypt1_found = true;
+//        }
+        if (abs(Lpt1_found)<2 && 60.f / 180.f * PI < conf && conf < 120.f / 180.f * PI && (i < 1.5f/sample_dist||(Lpt1_found && i < 1.7f/sample_dist))) {  //60 120
+            if((rpts1s[clip(i+dist,0,rpts1s_num-1)][1] + rpts1s[clip(i-dist,0,rpts1s_num-1)][1])*0.5f > rpts1s[i][1]){
+                if(rpts1s[clip(i+25,0,rpts1s_num-1)][0] < rpts1s[i][0]) down_side1 = -1;
+                else down_side1 = 1;
+                if(Lpt1_found==0){
+                    Lpt1_found = -1;//向下张开（╮或╭）
+                    Lpt1_rpts1s_id1 = i;
+                }else{
+                    Lpt1_found *= 2;
+                    Lpt1_rpts1s_id2 = i;
+                }
+            }else{
+                if(Lpt1_found==0){
+                    Lpt1_found =  1;//向上张开（╯或╰）
+                    Lpt1_rpts1s_id1 = i;
+                }else{
+                    Lpt1_found *= 2;
+                    Lpt1_rpts1s_id2 = i;
+                }
+            }
+        }
+//        if (conf > 55.0f / 180. * PI) barrier_angle1++;
+//        else barrier_angle1 = 0;
+        if (conf > 9.0f / 180. * PI) {
+            if(i < long_straight_thres / sample_dist){
+                is_long_straight1 = false;
+                if(i < straight_thres / sample_dist){
+                    is_straight1 = false;
+                    if(i < medium_straight_thres / sample_dist){
+                        is_medium_straight1 = false;
+                        if(i < short_straight_thres / sample_dist){
+                            is_short_straight1 = false;
+                        }
+                    }
+                }
+            }
+        }else if(i < straight_thres / sample_dist && is_straight1){
+            straight_idx1=i;
+        }
+        if (/*Ypt1_found == true &&*/ abs(Lpt1_found)==2 && is_straight1 == false) break;
+    }
 
     if(rpts0s_use && rpts1s_use)
     { //边线弯曲程度
