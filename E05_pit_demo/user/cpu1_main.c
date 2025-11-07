@@ -105,6 +105,94 @@ void core1_main(void)
 
             find_corner();     // 角点提取&筛选
 
+            /*初始巡线模式*/
+            // 单侧线少，切换巡线方向  切外向圆
+            if (rpts0s_num < rpts1s_num / 2 && rpts0s_num < 60) {
+                track_route = TRACK_RIGHT;
+            } else if (rpts1s_num < rpts0s_num / 2 && rpts1s_num < 60) {
+                track_route = TRACK_LEFT;
+            } else if (rpts0s_num < 60 && rpts1s_num > rpts0s_num) {
+                track_route = TRACK_RIGHT;
+            } else if (rpts1s_num < 60 && rpts0s_num > rpts1s_num) {
+                track_route = TRACK_LEFT;
+            }
+
+            /*初始跟线模式*/
+            track_method = EXTEND_LINE;
+
+            /*元素检测*/
+//            ①先检测斑马线元素
+            check_garage();
+
+//            ②再按级别检测其他元素
+            while(1)
+            {
+                if (cross_enable)
+                {
+                    if (cross_type == CROSS_NONE) check_corss();
+                    if (cross_type != CROSS_NONE) break;
+                }
+                if (circle_enable)
+                {
+                    if (circle_type == CIRCLE_NONE) check_circle();
+                    if (circle_type != CIRCLE_NONE) break;
+                }
+            }
+
+//            ③识别到元素以后开始进行元素识别处理
+            if (cross_type != CROSS_NONE)
+            {
+                corss_run();
+                circle_type = CIRCLE_NONE;
+            }
+            else if (circle_type != CIRCLE_NONE)
+            {
+                circle_run();
+            }
+
+
+            /*不同情况下的中线跟踪*/
+            if (cross_type == CROSS_IN)
+            {
+                if (track_route == TRACK_LEFT)
+                {
+                    track_leftline_c(far_rpts0s + far_Lpt0_rpts0s_id, far_rpts0s_num - far_Lpt0_rpts0s_id, rpts,
+                                     (int) round(angle_dist / sample_dist), pixel_per_meter * ROAD_WIDTH / 2);  //+ far_Lpt0_rpts0s_id  - far_Lpt0_rpts0s_id
+                    rpts_num = far_rpts0s_num - far_Lpt0_rpts0s_id; //更新远边线点集数量
+                }
+                else
+                {
+                    track_rightline_c(far_rpts1s + far_Lpt1_rpts1s_id, far_rpts1s_num - far_Lpt1_rpts1s_id, rpts,
+                                     (int) round(angle_dist / sample_dist), pixel_per_meter * ROAD_WIDTH / 2); // + far_Lpt1_rpts1s_id  - far_Lpt1_rpts1s_id
+                    rpts_num = far_rpts1s_num - far_Lpt1_rpts1s_id; //更新远边线点集数量
+                }
+
+            }
+            else
+            {
+                Track_CenterLine();  //计算中线点
+                if (track_route == TRACK_LEFT)
+                {
+                    rpts = rptsc0;
+                    rpts_num = rptsc0_num;
+                }
+                else
+                {
+                    rpts = rptsc1;
+                    rpts_num = rptsc1_num;
+                }
+            }
+            /*车轮坐标参数初始化*/
+            static float cx=94;
+            static float far_cx=94;
+            static float cy=119;
+            static float far_cy=60;
+
+            /*中间数组的索引*/
+            begin_id = 0;
+            find_nearest_point(cx, cy, rpts, rpts_num/2, &begin_id, 1000.0f);
+
+
             displayProcess();
             mt9v03x_finish_flag = 0;
         }

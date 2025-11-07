@@ -47,7 +47,15 @@ float get_angle_3points(float* point1, float* point2, float* point3);
 float get_straight_yaw(sint8 L_or_R);
 float get_yaw_error(float ref);
 
+void find_nearest_point(float x0, float y0, float points[][2], int serch_range, int* result_idx, float min_dist);
 void find_nearest_dist(float x0, float y0, float points[][2], int serch_range, float* result_dist, float min_dist);
+
+/*中线跟踪函数*/
+void Track_CenterLine(void);
+void track_leftline(float pts_in[][2], uint16 num, float pts_out[][2], uint16* len, uint16 approx_num, float dist);
+void track_leftline_c(float pts_in[][2], int num, float pts_out[][2], int approx_num, float dist);
+void track_rightline(float pts_in[][2], uint16 num, float pts_out[][2], uint16* len, uint16 approx_num, float dist);
+void track_rightline_c(float pts_in[][2], int num, float pts_out[][2], int approx_num, float dist);
 
 /*图像绘制函数*/
 uint8 float_line_to_img(image_t *img, float line[][2], uint16 len);

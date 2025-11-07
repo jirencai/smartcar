@@ -9,6 +9,9 @@
 #include "mapX.h"
 #include "mapY.h"
 
+#define EPS_Y 0.5f                              //
+
+
 image_t img_raw = DEF_IMAGE(new_image1, IMAGEW, IMAGEH);  //(mt9v03x_image, IMAGEW, IMAGEH)
 image_t img_OSTU = DEF_IMAGE(&new_image1[59], IMAGEW, IMAGEH - 60);
 
@@ -498,6 +501,159 @@ void find_corner(void)
     }
 
 }
+// 左边线跟踪中线
+void track_leftline(float pts_in[][2], uint16 num, float pts_out[][2], uint16* len, uint16 approx_num, float dist) {
+    *len = 0;
+    for (int i = 0; i < num; i++) {
+        float dx = pts_in[clip(i + approx_num, 0, num - 1)][0] - pts_in[clip(i - approx_num, 0, num - 1)][0];
+        float dy = pts_in[clip(i + approx_num, 0, num - 1)][1] - pts_in[clip(i - approx_num, 0, num - 1)][1];
+        float dn = sqrtf(dx * dx + dy * dy);
+        dx /= dn;
+        dy /= dn;
+        pts_out[*len][0] = pts_in[i][0] - dy * dist;
+        pts_out[*len][1] = pts_in[i][1] + dx * dist;
+        if(pts_out[*len][1]<120)(*len)++;
+//        (*len)++;
+    }
+}
+void track_leftline_c(float pts_in[][2], int num, float pts_out[][2], int approx_num, float dist){
+    for (int i = 0; i < num; i++) {
+        float dx = pts_in[clip(i + approx_num, 0, num - 1)][0] - pts_in[clip(i - approx_num, 0, num - 1)][0];
+        float dy = pts_in[clip(i + approx_num, 0, num - 1)][1] - pts_in[clip(i - approx_num, 0, num - 1)][1];
+        float dn = sqrt(dx * dx + dy * dy);
+        dx /= dn;
+        dy /= dn;
+        pts_out[i][0] = pts_in[i][0] - dy * dist;
+        pts_out[i][1] = pts_in[i][1] + dx * dist;
+    }
+}
+// 右边线跟踪中线
+void track_rightline(float pts_in[][2], uint16 num, float pts_out[][2], uint16* len, uint16 approx_num, float dist) {
+    *len = 0;
+    for (int i = 0; i < num; i++) {
+        float dx = pts_in[clip(i + approx_num, 0, num - 1)][0] - pts_in[clip(i - approx_num, 0, num - 1)][0];
+        float dy = pts_in[clip(i + approx_num, 0, num - 1)][1] - pts_in[clip(i - approx_num, 0, num - 1)][1];
+        float dn = sqrtf(dx * dx + dy * dy);
+        dx /= dn;
+        dy /= dn;
+        pts_out[*len][0] = pts_in[i][0] + dy * dist;
+        pts_out[*len][1] = pts_in[i][1] - dx * dist;
+        if(pts_out[*len][1]<120)(*len)++;
+//        (*len)++;
+    }
+}
+void track_rightline_c(float pts_in[][2], int num, float pts_out[][2], int approx_num, float dist) {
+    for (int i = 0; i < num; i++) {
+        float dx = pts_in[clip(i + approx_num, 0, num - 1)][0] - pts_in[clip(i - approx_num, 0, num - 1)][0];
+        float dy = pts_in[clip(i + approx_num, 0, num - 1)][1] - pts_in[clip(i - approx_num, 0, num - 1)][1];
+        float dn = sqrtf(dx * dx + dy * dy);
+        dx /= dn;
+        dy /= dn;
+        pts_out[i][0] = pts_in[i][0] + dy * dist;
+        pts_out[i][1] = pts_in[i][1] - dx * dist;
+    }
+}
+void Track_CenterLine(void){
+    // 左右中线跟踪
+    if(Lpt0_found<0){
+        rpts0s_use=Lpt0_rpts0s_id1;
+        track_leftline (rpts0s, rpts0s_use, rptsc0, &rptsc0_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+    }
+//    else if(Lpt0_found>0){
+//        rpts0s_use-=Lpt0_rpts0s_id1;
+//        track_leftline (rpts0s+Lpt0_rpts0s_id1, rpts0s_use, rptsc0, &rptsc0_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+//    }
+    else track_leftline (rpts0s, rpts0s_use, rptsc0, &rptsc0_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+    if(Lpt1_found<0){
+        rpts1s_use=Lpt1_rpts1s_id1;
+        track_rightline (rpts1s, rpts1s_use, rptsc1, &rptsc1_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+    }
+//    else if(Lpt1_found>0){
+//        rpts1s_use-=Lpt1_rpts1s_id1;
+//        track_rightline(rpts1s+Lpt1_rpts1s_id1, rpts1s_use, rptsc1, &rptsc1_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+//    }
+    else{
+        track_rightline (rpts1s, rpts1s_use, rptsc1, &rptsc1_num, 5, pixel_per_meter * ROAD_WIDTH / 2);
+    }
+//    for(uint16 i = 0; i < 0.6f*MIN(rpts0s_use,rpts1s_use); i++){
+//        if(barrier_count1 > 15) {
+//            barrier_pm1 = 1;
+//            break;
+//        }
+//        else if(barrier_count0 > 15){
+//            barrier_pm0 = 1;
+//            break;
+//        }
+//        else {
+//            barrier_pm1 = 0;
+//            barrier_pm0 = 0;
+//        }
+//        if(rptsc0[i][0] - rptsc1[i][0] > 0.1f * pixel_per_meter) barrier_count0++;
+//        if(rptsc1[i][0] - rptsc0[i][0] > 0.1f * pixel_per_meter) barrier_count1++;
+//    }
+    barrier_count = 0;
+
+    for (uint8 y = 110; y >= 10; --y) {
+        float x0 = 0.0f, x1 = 0.0f;
+        uint8 found0 = 0, found1 = 0;
+        uint8 i0 = 0, i1 = 0;
+        while (i0 < rptsc0_num-1 && rptsc0[i0][1] > y + EPS_Y)
+            ++i0;
+        if (i0 < rptsc0_num && fabsf(rptsc0[i0][1] - (float)y) < EPS_Y) {
+            x0     = rptsc0[i0][0];
+            found0 = 1;
+        }
+
+        /* ---- 在 edge1 中找 y 行 ---- */
+        while (i1 < rptsc1_num-1 && rptsc1[i1][1] > y + EPS_Y)
+            ++i1;
+        if (i1 < rptsc1_num && fabsf(rptsc1[i1][1] - (float)y) < EPS_Y) {
+            x1     = rptsc1[i1][0];
+            found1 = 1;
+        }
+
+        /* 两边都找到才记录，否则跳过该行 */
+        if (found0 && found1) {
+            if(x0 - x1 > 0.065f * pixel_per_meter) barrier_count++;
+        }
+        if(barrier_count > 5) barrier_pm = 1;
+        else barrier_pm = 0;
+        //555
+    }
+}
+
+/*
+ * min_dist:可接受的最大距离，若没有小于该距离的点则返回-1
+ */
+void find_nearest_point(float x0, float y0, float points[][2], int serch_range, int* result_idx, float min_dist){
+    *result_idx = -1;
+    float dx,dy,dist;
+    for (int i = 0; i < serch_range; i++) {
+        dx = points[i][0] - x0;
+        dy = points[i][1] - y0;
+        dist = sqrtf(dx * dx + dy * dy);
+        if (dist < min_dist) {
+            min_dist = dist;
+            *result_idx = i;
+        }
+    }
+}
+//返回x0,y0到points数组中最短点的距离
+void find_nearest_dist(float x0, float y0, float points[][2], int serch_range, float* result_dist, float min_dist){
+//    *result_dist = -1;
+    float dx,dy,dist;
+//    int num = MIN(serch_range, sizeof(points) / sizeof(points[0]));
+    for (int i = 0; i < serch_range; i++) {
+        dx = points[i][0] - x0;
+        dy = points[i][1] - y0;
+        dist = sqrtf(dx * dx + dy * dy);
+        if (dist < min_dist) {
+            min_dist = dist;
+            *result_dist = dist;
+        }
+    }
+}
+
 /*
  * 返回从左/右直道相对前进方向的角度(竖直向上为正方向)
  * 注意返回值为弧度制
@@ -641,21 +797,6 @@ void draw_o(image_t *img, int x, int y, int radius, uint8_t value)
     y = Img_Zoom*(y-120-Img_Move)+120;
     for (float i = -PI; i <= PI; i += PI / 10) {
             AT(img, clip(x + radius * cosf(i), 0, IMAGEW - 1), clip(y + radius * sinf(i), 0, IMAGEH - 1)) = value;
-    }
-}
-//返回x0,y0到points数组中最短点的距离
-void find_nearest_dist(float x0, float y0, float points[][2], int serch_range, float* result_dist, float min_dist){
-//    *result_dist = -1;
-    float dx,dy,dist;
-//    int num = MIN(serch_range, sizeof(points) / sizeof(points[0]));
-    for (int i = 0; i < serch_range; i++) {
-        dx = points[i][0] - x0;
-        dy = points[i][1] - y0;
-        dist = sqrtf(dx * dx + dy * dy);
-        if (dist < min_dist) {
-            min_dist = dist;
-            *result_dist = dist;
-        }
     }
 }
 

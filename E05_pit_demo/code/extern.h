@@ -15,6 +15,8 @@ extern float fclip(float x, float low, float up);   //夹取中间的值（返回float）
 
 extern uint8 Image_Processing;                      //0:未使用 1:正在处理 2:处理已完成
 
+#define ROAD_WIDTH      (0.45)                      //道路宽度
+
 /*图像宏*/
 #define IMAGEH MT9V03X_H
 #define IMAGEW MT9V03X_W
@@ -28,6 +30,8 @@ extern float alpha;
 
 extern bool Extra_search_path;                      //搜边线时，搜到图像边界后是否继续向上搜索
 extern bool Dynamic_begin_x;                        //是否使用动态搜索起点
+
+extern int begin_id = 0;                            //中间数组的索引
 
 //左右边线二值化阈值，用于寻找起点
 extern uint8 thres_L;                               //左边线二值化阈值
@@ -89,6 +93,11 @@ extern uint16 rpts0an_num, rpts1an_num;
 extern float rptsc0[POINTS_MAX_LEN][2];
 extern float rptsc1[POINTS_MAX_LEN][2];
 extern uint16 rptsc0_num, rptsc1_num;
+// 中线
+extern float rpts1[POINTS_MAX_LEN][2];
+extern uint16 rpts1_num;
+extern float (*rpts)[2];
+extern uint16 rpts_num;
 // 归一化中线
 extern float rptsn[POINTS_MAX_LEN][2];
 extern uint16 rptsn_num;
@@ -155,6 +164,20 @@ enum track_route_e {
     TRACK_RIGHT,
 };
 extern enum track_route_e track_route;
+
+// 当前跟踪模式
+enum track_method_e {
+    EXTEND_LINE,
+    ROUND_SCAN,
+};
+extern enum track_method_e track_method;
+
+/*元素部分识别*/
+extern bool cross_enable;
+extern bool circle_enable;
+
+extern uint16 barrier_count;                    //障碍物计数
+extern bool barrier_pm = 0;                     //障碍物标志位
 
 extern uint8 infinite_circle;
 

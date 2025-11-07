@@ -32,6 +32,7 @@ float alpha = 50.7f;
 bool Extra_search_path = true;          //搜边线时，搜到图像边界后是否继续向上搜索
 bool Dynamic_begin_x = true;            //是否使用动态搜索起点
 
+int begin_id = 0;                       //中间数组的索引
 //左右边线二值化阈值，用于寻找起点
 uint8 thres_L = 140;                    //左边线二值化阈值
 uint8 thres_R = 140;                    //右边线二值化阈值
@@ -48,7 +49,7 @@ sint16 line_blur_kernel = 7;            // 边线三角滤波核的大小
 sint16 begin_dx = 0;                    // 起始点距离图像中心的左右偏移量
 sint16 begin_y = 85;                    // 起始点距离图像底部的上下偏移量
 
-float pixel_per_meter=107.8;            //65.6 // 俯视图中每米的像素数（可能需要调参） 115
+float pixel_per_meter=107.8;            // 65.6 // 俯视图中每米的像素数（可能需要调参） 115
 float sample_dist=0.01;                 // 边线等距采样的间距
 float angle_dist=0.12;                  // 计算边线转角时，三个计算点的距离 0.12
 
@@ -85,7 +86,11 @@ uint16 rpts0an_num, rpts1an_num;
 float rptsc0[POINTS_MAX_LEN][2];
 float rptsc1[POINTS_MAX_LEN][2];
 uint16 rptsc0_num, rptsc1_num;
-
+// 中线
+float rpts1[POINTS_MAX_LEN][2];
+uint16 rpts1_num;
+float (*rpts)[2];
+uint16 rpts_num;
 // 归一化中线
 float rptsn[POINTS_MAX_LEN][2];
 uint16 rptsn_num;
@@ -130,10 +135,6 @@ sint8 down_side1 = 0;
 sint8 far_Lpt0_found, far_Lpt1_found;
 sint16 far_Lpt0_rpts0s_id, far_Lpt1_rpts1s_id;
 
-
-
-
-
 /*直道等判断参数*/
 bool is_straight0, is_straight1;
 bool is_long_straight0, is_long_straight1;
@@ -146,5 +147,14 @@ float Total_mileage,Total_mileage_use;  //总里程
 
 /*当前巡线模式：左巡线和右巡线*/
 enum track_route_e track_route = TRACK_RIGHT;
+/*当前跟踪模式：延伸线模式*/
+enum track_method_e track_method = EXTEND_LINE;//可防止特殊情况下寻到绕回来的线（如入库，断路）
+
+/*元素部分识别*/
+bool cross_enable = 1;                  //是否启用十字元素
+bool circle_enable = 1;                 //是否启用圆环元素
+
+uint16 barrier_count = 0;               //障碍物计数
+bool barrier_pm = 0;                    //障碍物标志位
 
 uint8 infinite_circle = 0;              //无限圆环
