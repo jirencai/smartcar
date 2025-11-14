@@ -14,6 +14,9 @@ extern bool cross_angle;
 extern int cross_width;
 extern uint8 quit_value;
 
+extern float target_yaw;
+
+
 enum cross_type_e {
     CROSS_NONE = 0,     // 非十字模式
     CROSS_BEGIN,        // 找到左右两个L角点
@@ -27,8 +30,9 @@ extern uint8 use_cross_aim;
 
 extern int far_x1, far_x2, far_y1, far_y2;
 void check_cross(void);
-void run_cross(void);
+void cross_run(void);
 void cross_farline(void);
+void draw_cross();
 
 
 #endif /* CODE_CROSS_H_ */

@@ -17,6 +17,8 @@ enum cross_type_e cross_type = CROSS_NONE;
 
 /*编码器值，防止出现一些重复触发*/
 float cross_encoder;
+float target_yaw = 0;
+
 
 //双L角点,切十字模式
 void check_cross(void) {
@@ -39,7 +41,7 @@ void check_cross(void) {
 uint8 use_cross_aim=0;
 
 /*十字进行时*/
-void run_cross(void) {
+void cross_run(void) {
     bool Xfound = Lpt0_found < 0 && Lpt1_found < 0 && Lpt_open==1 && cross_angle;
     static uint32_t cross_begin_start_time = 0; // 记录进入该状态的起始时间（单位：秒）
 
@@ -248,7 +250,7 @@ void cross_farline(void) {
         int ip1 = clip(i + (int) round(angle_dist / sample_dist), 0, far_rpts0s_num - 1);
         float conf = fabs(far_rpts0a[i]) - (fabs(far_rpts0a[im1]) + fabs(far_rpts0a[ip1])) / 2;
         if (60. / 180. * PI < conf && conf < 120. / 180. * PI && i < 100 && far_rpts0s[clip(i-10,0,far_rpts0s_num)][0] - far_rpts0s[i][0] < -2 && (far_rpts0s[clip(i+dist,0,far_rpts0s_num-1)][1] + far_rpts0s[clip(i-dist,0,far_rpts0s_num-1)][1])*0.5f < far_rpts0s[i][1] && far_rpts0s[i][1] > top_value-15) {
-            far_Lpt0_rpts0s_id = i;
+            far_Lpt0_rpts0s_id = (sint16)i;
             far_Lpt0_found = true;
             break;
         }
@@ -260,9 +262,44 @@ void cross_farline(void) {
         float conf = fabs(far_rpts1a[i]) - (fabs(far_rpts1a[im1]) + fabs(far_rpts1a[ip1])) / 2;
 
         if (60. / 180. * PI < conf && conf < 120. / 180. * PI && i < 100 && far_rpts1s[clip(i-10,0,far_rpts1s_num)][0] - far_rpts1s[i][0] > 2 && (far_rpts1s[clip(i+dist,0,far_rpts1s_num-1)][1] + far_rpts1s[clip(i-dist,0,far_rpts1s_num-1)][1])*0.5f < far_rpts1s[i][1] && far_rpts1s[i][1] > top_value-15) {
-            far_Lpt1_rpts1s_id = i;
+            far_Lpt1_rpts1s_id = (sint16)i;
             far_Lpt1_found = true;
             break;
         }
+    }
+}
+/*画线，绘制十字*/
+void draw_cross()
+{
+    if (cross_type == CROSS_IN) { //&& line_show_sample
+        for (int i = 0; i < far_rpts0s_num; i++) {
+            float_line_to_img(&img_line, far_rpts0s, far_rpts0s_num);
+//            AT_IMAGE(&img_line, clip(far_rpts0s[i][0], 0, img_line.width - 1), clip(far_rpts0s[i][1], 0, img_line.height - 1)) = 100;
+        }
+        for (int i = 0; i < far_rpts1s_num; i++) {
+            float_line_to_img(&img_line, far_rpts1s, far_rpts1s_num);
+//            AT_IMAGE(&img_line, clip(far_rpts1s[i][0], 0, img_line.width - 1), clip(far_rpts1s[i][1], 0, img_line.height - 1)) = 100;
+        }
+
+        if (far_Lpt0_found) {
+            draw_o(&img_line, far_rpts0s[far_Lpt0_rpts0s_id][0], far_rpts0s[far_Lpt0_rpts0s_id][1], 3, 255);
+        }
+        if (far_Lpt1_found) {
+            draw_o(&img_line, far_rpts1s[far_Lpt1_rpts1s_id][0], far_rpts1s[far_Lpt1_rpts1s_id][1], 3, 255);
+        }
+
+//        draw_o(&img_line, clip(mapx[(int) begin_y][far_x1], 0, img_line.width - 1), clip(mapy[(int) begin_y][far_x1], 0, img_line.height - 1), 3, 255);
+//        draw_o(&img_line, clip(mapx[(int) begin_y][far_x2], 0, img_line.width - 1), clip(mapy[(int) begin_y][far_x1], 0, img_line.height - 1), 3, 255);
+//        draw_o(&img_line, clip(mapx[far_y1][far_x1], 0, img_line.width - 1), clip(mapy[far_y1][far_x1], 0, img_line.height - 1), 3, 255);
+//        draw_o(&img_line, clip(mapx[far_y2][far_x2], 0, img_line.width - 1), clip(mapy[far_y2][far_x2], 0, img_line.height - 1), 3, 255);
+
+        /*
+        for(int y1=begin_y; y1>far_y1; y1--){
+            AT_IMAGE(&img_raw, far_x1, y1) = 128;
+        }
+        for(int y2=begin_y; y2>far_y2; y2--){
+            AT_IMAGE(&img_raw, far_x2, y2) = 128;
+        }
+        */
     }
 }

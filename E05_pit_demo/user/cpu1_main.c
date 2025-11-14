@@ -129,7 +129,7 @@ void core1_main(void)
             {
                 if (cross_enable)
                 {
-                    if (cross_type == CROSS_NONE) check_corss();
+                    if (cross_type == CROSS_NONE) check_cross();
                     if (cross_type != CROSS_NONE) break;
                 }
                 if (circle_enable)
@@ -142,7 +142,7 @@ void core1_main(void)
 //            ③识别到元素以后开始进行元素识别处理
             if (cross_type != CROSS_NONE)
             {
-                corss_run();
+                cross_run();
                 circle_type = CIRCLE_NONE;
             }
             else if (circle_type != CIRCLE_NONE)
@@ -192,9 +192,87 @@ void core1_main(void)
             begin_id = 0;
             find_nearest_point(cx, cy, rpts, rpts_num/2, &begin_id, 1000.0f);
 
+            far_begin_id = 0;
+            find_nearest_point(far_cx, far_cy, rpts, rpts_num/2, &far_begin_id, 1000.0f);
+            far_cx = rpts[far_begin_id][0];
+            far_cy = rpts[far_begin_id][1];
 
-            displayProcess();
-            mt9v03x_finish_flag = 0;
+            if (begin_id >= 0 && rpts_num && rpts_num - begin_id >= 5)
+            {
+                if(cross_type != CROSS_IN) aim_idx_f = (int)(now_aim_distance / sample_dist);
+                else aim_idx_f = (int)(0.35f / sample_dist);  //锚点索引计算
+                switch(track_method)
+                {
+                    case ROUND_SCAN:
+                        // 中线等距采样
+                        rptsn_num = sizeof(rptsn) / sizeof(rptsn[0]);
+                        resample_points(rpts + begin_id, rpts_num - begin_id, rptsn, &rptsn_num, sample_dist * pixel_per_meter);
+                        // 圆等距跟踪
+                        round_scan(&aim_idx,cx,cy,now_aim_distance*pixel_per_meter);
+                        break;
+                    case EXTEND_LINE:
+                        // 线等距跟踪（新归一化方法）
+                        //TODO:fix bug
+                        if(cross_type != CROSS_IN)
+                        {
+                            extend_line(rpts+begin_id,cx,cy,MIN(10,rpts_num-begin_id));//中线线性拟合(最近的N个) 并改变初始点if(cross_type != CROSS_IN)
+                        }
+                        // 中线等距采样
+                        rptsn_num = sizeof(rptsn) / sizeof(rptsn[0]);
+                        resample_points2(rpts + begin_id, rpts_num - begin_id, rptsn, &rptsn_num, sample_dist * pixel_per_meter);
+                        break;
+                }
+                if(Circle_In_Ready==1) Circle_In_Ready_Check();
+
+                // 计算远锚点偏差值
+                float dx = cx - rptsn[aim_idx][0];
+                float dy = cy - rptsn[aim_idx][1]; //+ 0.2 * pixel_per_meter;
+                float far_dx = far_cx - rptsn[rptsn_num - 1][0];
+                float far_dy = far_cy - rptsn[rptsn_num - 1][1];
+
+                error = atan2f(dx, dy) * Rad2Ang;//左转为正 单位为度
+
+                far_error = atan2f(far_dx, far_dy) * Rad2Ang;
+
+                if(lock_yaw){
+                    target_yaw = Yaw_a + img_error; // + img_error
+                    lock_yaw = 0;
+                }
+//                if(abs(last_error - error) > 25) error = 0.0;
+//                if(cross_type == CROSS_IN || bridge_type == BRIDGE_IN) img_error = target_yaw-Yaw_a;  //CROSS_IN和BRIDGE_IN状态下锁yaw值
+//                    if(cross_type == CROSS_BEGIN) img_error = 0.5f * error + 0.5f * img_error; //CROSS_BEGIN状态下尽量准确的巡线 以防过滤掉应当偏转的角度
+//                    else img_error = 0.6f * error + 0.4f * img_error;  //平滑误差
+//                if(bridge_type == BRIDGE_IN && !(rpts0s_num > 5 && rpts1s_num > 5)) {
+//                    img_error = last_error;
+//                }
+                if(cross_type == CROSS_IN) img_error = 0.4f * error + 0.6f * img_error;
+                else img_error = 0.5f * error + 0.5f * img_error;
+                delta_error = fabs(img_error - last_error);  //计算偏差值变化量
+                last_error = img_error; //记录本次偏差值用于下一次的变化量计算
+                R = fabsf((aim_idx / (pixel_per_meter*2))/sinf(img_error * Ang2Rad));
+                K = 1.0f/R;
+//                if(bridge_type == BRIDGE_IN && delta_error > 5.0f) aim_yaw_a = Yaw_a + last_error;
+//                else aim_yaw_a = Yaw_a + img_error;
+                aim_yaw_a = Yaw_a + img_error;
+//                    Image_Processing=0;
+                mt9v03x_finish_flag = 0;
+                fre_cy.img_end_time = fre_cy.m10stime;
+
+//                    fre_cy.
+                //直道计数
+//                if(is_straight1 && straight_cnt<5)straight_cnt++;
+//                if(!is_straight1 && straight_cnt)straight_cnt--;
+//                    aim_yaw_a = Yaw_a + img_error;//fclip(angle_diff, -15, 15);//输出角度至转向环 目标偏航角
+//                    Aim_X_Pos = (rptsn[0][0] - cx)*0.01f;
+//                    Image_Processing=0;
+            } else
+            {
+                    // 中线点过少(出现问题)，则不控制舵机
+                    rptsn_num = 0;
+                    aim_yaw_a = Yaw_a + img_error*1.0;//原速转弯
+                    mt9v03x_finish_flag = 0;
+            }
+
         }
 
 

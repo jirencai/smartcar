@@ -11,6 +11,10 @@ int clip(int x, int low, int up) {return x > up ? up : x < low ? low : x;}
 float fclip(float x, float low, float up) {return x > up ? up : x < low ? low : x;}
 
 
+/*开始运行时间*/
+uint16 start_time = 0;
+bool lock_yaw = 0;
+
 /*屏幕显示参数*/
 uint8_t show_flag = 0;
 
@@ -25,7 +29,12 @@ float height = 30.0f;
 float cam_angle = 60.5f;
 float alpha = 50.7f;
 
-
+/* (图像处理输出的) 方向误差*/
+volatile float error = 0;
+volatile float img_error = 0;
+volatile float far_error = 0;
+volatile float last_error = 0;
+volatile float delta_error = 0;
 
 /*图像处理参数*/
 //模式调配
@@ -33,6 +42,12 @@ bool Extra_search_path = true;          //搜边线时，搜到图像边界后是否继续向上搜
 bool Dynamic_begin_x = true;            //是否使用动态搜索起点
 
 int begin_id = 0;                       //中间数组的索引
+int far_begin_id = 0;                   //远线中间数组的索引
+float R = 0,K;
+
+
+float now_aim_distance=0.55;            //0.55预瞄点定长度
+
 //左右边线二值化阈值，用于寻找起点
 uint8 thres_L = 140;                    //左边线二值化阈值
 uint8 thres_R = 140;                    //右边线二值化阈值

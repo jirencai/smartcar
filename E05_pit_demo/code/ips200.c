@@ -19,7 +19,7 @@ void ips200Init(void)
 }
 void drawleftline(void)//画左边线
 {
-    int x,y;
+    uint16 x,y;
     for(int i=0;i<POINTS_MAX_LEN-2;i+=1)
     {
         x=ipts0[i][0];    //之前是搜边界没标出来
@@ -30,7 +30,7 @@ void drawleftline(void)//画左边线
 }
 void drawrightline(void)//画右边线
 {
-    int x,y;
+    uint16 x,y;
     for(int i=0;i<POINTS_MAX_LEN-2;i+=1)
     {
         x=ipts1[i][0];

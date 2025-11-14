@@ -1,7 +1,7 @@
 /*
  * circle.h
  *
- *  Created on: 2025Äê11ÔÂ5ÈÕ
+ *  Created on: 2025ï¿½ï¿½11ï¿½ï¿½5ï¿½ï¿½
  *      Author: ji_rencai
  */
 
@@ -11,21 +11,24 @@
 #include "zf_common_headfile.h"
 
 enum circle_type_e {
-    CIRCLE_NONE = 0,                            // ·ÇÔ²»·Ä£Ê½
-    CIRCLE_LEFT_BEGIN, CIRCLE_RIGHT_BEGIN,      // Ô²»·¿ªÊ¼£¬Ê¶±ðµ½µ¥²àL½ÇµãÁíÒ»²à³¤Ö±µÀ¡£
-    CIRCLE_LEFT_IN, CIRCLE_RIGHT_IN,            // Ô²»·½øÈë£¬¼´×ßµ½Ò»²àÖ±µÀ£¬Ò»²àÔ²»·µÄÎ»ÖÃ¡£
-    CIRCLE_LEFT_RUNNING, CIRCLE_RIGHT_RUNNING,  // Ô²»·ÄÚ²¿¡£
-    CIRCLE_LEFT_OUT, CIRCLE_RIGHT_OUT,          // ×¼±¸³öÔ²»·£¬¼´Ê¶±ðµ½³ö»·´¦µÄL½Çµã¡£
-    CIRCLE_LEFT_END, CIRCLE_RIGHT_END,          // Ô²»·½áÊø£¬¼´ÔÙ´Î×ßµ½µ¥²àÖ±µÀµÄÎ»ÖÃ¡£
-    CIRCLE_BREAK, //Ô²»·±»ÖÐ¶Ï£¨ÈçÂ·ÕÏ£©
+    CIRCLE_NONE = 0,                            // ï¿½ï¿½Ô²ï¿½ï¿½Ä£Ê½
+    CIRCLE_LEFT_BEGIN, CIRCLE_RIGHT_BEGIN,      // Ô²ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ê¶ï¿½ðµ½µï¿½ï¿½ï¿½Lï¿½Çµï¿½ï¿½ï¿½Ò»ï¿½à³¤Ö±ï¿½ï¿½ï¿½ï¿½
+    CIRCLE_LEFT_IN, CIRCLE_RIGHT_IN,            // Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ßµï¿½Ò»ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã¡ï¿½
+    CIRCLE_LEFT_RUNNING, CIRCLE_RIGHT_RUNNING,  // Ô²ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½
+    CIRCLE_LEFT_OUT, CIRCLE_RIGHT_OUT,          // ×¼ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ðµ½³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½Çµã¡£
+    CIRCLE_LEFT_END, CIRCLE_RIGHT_END,          // Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½ï¿½ßµï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã¡ï¿½
+    CIRCLE_BREAK, //Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½Â·ï¿½Ï£ï¿½
     CIRCLE_NUM,
 };
 extern enum circle_type_e circle_type;
 
+extern uint8 Circle_In_Ready;                   //åœ†çŽ¯è¿›å…¥å‡†å¤‡æ ‡å¿—ä½
+
 void check_circle(void);
-void run_circle();
+void circle_run();
 void Circle_In_Ready_Check(void);
 
+void draw_circle(void);
 
 
 

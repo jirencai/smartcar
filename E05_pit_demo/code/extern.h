@@ -16,6 +16,9 @@ extern float fclip(float x, float low, float up);   //夹取中间的值（返回float）
 extern uint8 Image_Processing;                      //0:未使用 1:正在处理 2:处理已完成
 
 #define ROAD_WIDTH      (0.45)                      //道路宽度
+/*开始运行*/
+extern uint16 start_time;
+extern bool lock_yaw;
 
 /*图像宏*/
 #define IMAGEH MT9V03X_H
@@ -27,11 +30,22 @@ extern float height;
 extern float cam_angle;
 extern float alpha;
 
+/*图像处理输出*/
+extern volatile float error;
+extern volatile float img_error;
+extern volatile float far_error;
+extern volatile float last_error;
+extern volatile float delta_error;
+
 
 extern bool Extra_search_path;                      //搜边线时，搜到图像边界后是否继续向上搜索
 extern bool Dynamic_begin_x;                        //是否使用动态搜索起点
 
-extern int begin_id = 0;                            //中间数组的索引
+extern int begin_id;                                //中间数组的索引
+extern int far_begin_id;                            //远线中间数组的索引
+extern float R,K;
+
+extern float now_aim_distance;                      //预瞄点定长度
 
 //左右边线二值化阈值，用于寻找起点
 extern uint8 thres_L;                               //左边线二值化阈值
@@ -177,7 +191,7 @@ extern bool cross_enable;
 extern bool circle_enable;
 
 extern uint16 barrier_count;                    //障碍物计数
-extern bool barrier_pm = 0;                     //障碍物标志位
+extern bool barrier_pm;                         //障碍物标志位
 
 extern uint8 infinite_circle;
 

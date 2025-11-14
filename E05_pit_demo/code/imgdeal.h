@@ -57,6 +57,16 @@ void track_leftline_c(float pts_in[][2], int num, float pts_out[][2], int approx
 void track_rightline(float pts_in[][2], uint16 num, float pts_out[][2], uint16* len, uint16 approx_num, float dist);
 void track_rightline_c(float pts_in[][2], int num, float pts_out[][2], int approx_num, float dist);
 
+/*跟踪函数*/
+//圆环跟踪函数
+void round_scan(sint16* aim_idx, float cx, float cy, float aim_dist);
+//等线距跟踪
+void extend_line(float(*data)[2], float cx, float cy, int N);
+//等距采样2（有bug）
+void resample_points2(float pts_in[][2], uint16 num1, float pts_out[][2], uint16 *num2, float dist);
+
+
+
 /*图像绘制函数*/
 uint8 float_line_to_img(image_t *img, float line[][2], uint16 len);
 void clear_image(image_t *img);

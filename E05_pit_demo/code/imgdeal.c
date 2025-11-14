@@ -621,6 +621,115 @@ void Track_CenterLine(void){
         //555
     }
 }
+// 圆环等距跟踪
+void round_scan(sint16* aim_idx, float cx, float cy, float aim_dist){
+    // 找距离追踪点的距离最接近目标值的点
+    sint16 idx = *aim_idx;
+    float dx = rptsn[idx][0] - cx;
+    float dy = rptsn[idx][1] - cy;
+    float dist, min_dist = fabsf(sqrtf(dx * dx + dy * dy)-aim_dist);
+    for (sint16 i = 0; i < rptsn_num; i++) {
+        dx = rptsn[i][0] - cx;
+        dy = rptsn[i][1] - cy;
+        dist = fabsf(sqrtf(dx * dx + dy * dy)-aim_dist);
+        if (dist < min_dist && dist > 20.0f && rptsn[i][1]>0 && rptsn[i][1]<120) {
+            min_dist = dist;
+            idx = i;
+        }
+    }
+    *aim_idx = idx;
+}
+//等线距跟踪
+void extend_line(float(*data)[2], float cx, float cy, int N){
+    // 计算数据点的平均值
+    float x_avg = 0, y_avg = 0, delta_x;
+    for (int i = 0; i < N; i++) {
+        x_avg += data[i][0];
+        y_avg += data[i][1];
+    }
+    x_avg /= (float)N;
+    y_avg /= (float)N;
+
+    // 计算最小二乘拟合的斜率和截距
+    float numerator = 0, denominator = 0;
+    for (int i = 0; i < N; i++) {
+        delta_x = data[i][0] - x_avg;
+        numerator += delta_x * (data[i][1] - y_avg);
+        denominator += delta_x * delta_x;
+    }
+    float k = numerator / denominator;
+    float b = y_avg - k * x_avg;
+
+//    // 输出最小二乘拟合的方程
+//    printf("y = %.2f * x + %.2f\n", k, b);
+
+    // 计算待求点到拟合直线的垂足坐标
+    float y0 = ((k*cy+cx)*k+b) / (k * k + 1.0f);
+    float x0 = (y0-b)/k;
+    //调试信息
+//    disp(13,x0,"x0");
+//    disp(14,y0,"y0");
+
+    // 输出垂足坐标
+    data[0][0] = x0;
+    data[0][1] = y0;
+    // 检查剩余点的方向
+    // 沿拟合直线向前的方向向量：(-1/k,-1)
+//    float dx,dy;
+//    for(int i = 1; i < N; i++){
+//        dx = data[i][0]-data[i-1][0];
+//        dy = data[i][1]-data[i-1][1];
+//        if(dx/k+dy<=0.0f){//若反向则舍弃
+//            data[i][0] = data[i-1][0];
+//            data[i][1] = data[i-1][1];
+//        }
+//    }
+}
+
+
+// 点集等距采样2  使采样后点与点的距离为`dist`
+// TODO: fix bug
+void resample_points2(float pts_in[][2], uint16 num1, float pts_out[][2], uint16 *num2, float dist) {
+    if (num1 < 0) {
+        *num2 = 0;
+        return;
+    }
+    pts_out[0][0] = pts_in[0][0];
+    pts_out[0][1] = pts_in[0][1];
+    uint16 len = 1;
+    for (int i = 0; i < num1 - 1 && len < *num2; i++) {
+        float x0 = pts_in[i][0];
+        float y0 = pts_in[i][1];
+        float x1 = pts_in[i + 1][0];
+        float y1 = pts_in[i + 1][1];
+
+        do {
+            float x = pts_out[len - 1][0];
+            float y = pts_out[len - 1][1];
+
+            float dx0 = x0 - x;
+            float dy0 = y0 - y;
+            float dx1 = x1 - x;
+            float dy1 = y1 - y;
+
+            float dist0 = sqrtf(dx0 * dx0 + dy0 * dy0);
+            float dist1 = sqrtf(dx1 * dx1 + dy1 * dy1);
+
+            float r0 = (dist1 - dist) / (dist1 - dist0);
+            float r1 = 1 - r0;
+
+            if (r0 < 0 || r1 < 0) break;
+            x0 = x0 * r0 + x1 * r1;
+            y0 = y0 * r0 + y1 * r1;
+            pts_out[len][0] = x0;
+            pts_out[len][1] = y0;
+            len++;
+        } while (len < *num2);
+
+    }
+    *num2 = len;
+}
+
 
 /*
  * min_dist:可接受的最大距离，若没有小于该距离的点则返回-1
