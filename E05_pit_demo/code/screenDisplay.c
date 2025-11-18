@@ -8,11 +8,13 @@
 #include "screenDisplay.h"
 
 extern uint8_t new_image[MT9V03X_H][MT9V03X_W];
-
+char textDisplayS[64];
 void displayProcess(void)
 {
     rawImgDisplay();
     lineImgDisplay();
+    dataDisplay();
+
 }
 
 void rawImgDisplay(void)
@@ -92,4 +94,10 @@ void lineImgDisplay(void)
 //    draw_road_reference(&img_line, 255);
     ips200_show_gray_image(0, 120, img_line.data[0], MT9V03X_W, MT9V03X_H, 188, 120, 0); //IPM_map img_line.data[0]
 }
-
+void dataDisplay(void)
+{
+    sprintf(textDisplayS, "turnKp: %.3f", turnPid.Kp);
+    ips200_show_string(0, 240, textDisplayS);
+    sprintf(textDisplayS, "turnKp2: %.3f", turnPid.Kp2);
+    ips200_show_string(0, 256, textDisplayS);
+}

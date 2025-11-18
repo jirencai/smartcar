@@ -40,9 +40,6 @@
 uint8_t new_image[MT9V03X_H][MT9V03X_W];
 uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
 
-uint16_t data_buffer;                       //无线串口读取缓存区
-uint8_t data_len;                           //无线串口读取缓存区长度
-
 #define LED1                    (P20_9)
 #define LED2                    (P20_8)
 
@@ -99,16 +96,7 @@ int core0_main(void)
 
         // 此处编写需要循环执行的代码
 	    keyScan();
-//	    /*读取无线串口信息*/
-//	    data_len = wireless_uart_read_buffer(data_buffer, sizeof(data_buffer));
-//	    if (data_len != 0)
-//	    {
-//	        //判断串口读取到的数据
-//
-//	    }
-//        icmTest();
-
-
+	    readBuffer();
         // 此处编写需要循环执行的代码
 
 	}

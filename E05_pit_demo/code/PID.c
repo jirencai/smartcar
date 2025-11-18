@@ -31,7 +31,7 @@ pidTypedef pid_speed_l = {
 
 turnPidTypedef turnPid = {
         0, 0, 0,
-        1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
         0
 };
 /*位置式PID电机算法*/

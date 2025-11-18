@@ -15,6 +15,7 @@ void icmTest(void);
 void rawImgDisplay(void);
 void lineImgDisplay(void);
 
+void dataDisplay(void);
 
 
 #endif /* CODE_SCREENDISPLAY_H_ */

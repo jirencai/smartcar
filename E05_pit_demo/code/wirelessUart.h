@@ -17,12 +17,12 @@
 //      GND                 核心板电源地 GND
 //      3V3                 核心板 3V3 电源
 
-extern char textDisplay[];
 void wirelessUartInit(void);
 void wirelessUartDisplay(void);
 void wirelessUartReceive(void);
 void icmTest(void);
 void motorTest(void);
+void readBuffer(void);
 
 
 #endif /* CODE_WIRELESSUART_H_ */

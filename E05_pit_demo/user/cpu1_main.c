@@ -281,7 +281,7 @@ void core1_main(void)
 
         }
         displayProcess();
-        motorTest();
+//        motorTest();
 //        icmTest();
 
 

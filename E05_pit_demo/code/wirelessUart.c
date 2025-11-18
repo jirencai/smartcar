@@ -8,8 +8,8 @@
 #define LED1                    (P20_9)
 
 char textDisplay[64];
-uint16_t textNum;
-//uint8 data_buffer[32];
+uint8_t textNum;
+uint8_t data_buffer[16];
 //uint8 data_len;
 void wirelessUartInit(void)
 {
@@ -49,11 +49,23 @@ void motorTest(void)
 
 void readBuffer(void)
 {
-    textNum = wireless_uart_read_buffer();
-    if (!textNum)
+    textNum = (uint8_t)wireless_uart_read_buffer(data_buffer, 16);
+    if (textNum > 0)
     {
+        data_buffer[textNum] = 0; // !!! ±ØÐë¼Ó×Ö·û´®½áÊø·û
+        if (strncmp((char *)data_buffer, "turnKp=", 7) == 0)                turnPid.Kp = atof((char *)data_buffer + 7);
+        else if (strncmp((char *)data_buffer, "turnKp2=", 8) == 0)          turnPid.Kp2 = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "turnGkd=", 8) == 0)          turnPid.GKD = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "motorKp=", 8) == 0)          pid_speed_r.Kp = pid_speed_l.Kp = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "motorKi=", 8) == 0)          pid_speed_r.Ki = pid_speed_l.Ki = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "motorKd=", 8) == 0)          pid_speed_r.Kd = pid_speed_l.Kd = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "motorIntMax=", 12) == 0)     pid_speed_r.limit = pid_speed_l.limit = atof((char *)data_buffer + 12);
+        else if (strncmp((char *)data_buffer, "dutyMax=", 8) == 0)          turnPid.Kp2 = atof((char *)data_buffer + 8);
+        memset(data_buffer, 0, 16);
 
     }
+    system_delay_ms(50);
+
 }
 
 #define FRAME_HEADER1   0xAA
