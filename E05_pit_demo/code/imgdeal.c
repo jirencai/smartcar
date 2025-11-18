@@ -191,8 +191,8 @@ void process_image(void)
     else begin_x_idx = (int)(0.04f*(float)middle+0.96f*(float)begin_x_idx);  //如果都没找到，使用middle和当前begin_x_idx加权平均
     begin_x_idx = clip(begin_x_idx, 100, 100+169);  //限制begin_x_idx
 
-    IPM_init(Pitch_a, -Roll_a);  //初始化透视变换，使用俯仰角Pitch_a和横滚角Roll_a
-
+//    IPM_init(Pitch_a, -Roll_a);  //初始化透视变换，使用俯仰角Pitch_a和横滚角Roll_a
+    IPM_init(0, 0);
     Image_Processing = 1;           /*处理状态的变换*/
     /*左右边线坐标变换*/
     for (int i = 0; i < ipts0_num; i++)

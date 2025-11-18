@@ -80,9 +80,9 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
 //    wireless_uart_send_string(textDisplay);
 
     //得到图像误差输出得到的转角映射
-    turn_value = PID_turn(&turnPid, error, Yaw_gyro);
-    pid_speed_r.target_val = turn_value;
-    pid_speed_l.target_val = -turn_value;
+    turn_value = PID_turn(&turnPid, img_error, Yaw_gyro);
+    pid_speed_r.target_val = straight_value + turn_value;
+    pid_speed_l.target_val = straight_value - turn_value;
 
     //输出给电机pid
     PID_Motor(&pid_speed_r, encoder_data_4);
@@ -91,8 +91,8 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
     //输出给电机占空比
 //    motorLeftWrite(pid_speed_l.output);
 //    motorRightWrite(pid_speed_r.output);
-    motorLeftWrite(-turn_value);
-    motorRightWrite(turn_value);
+    motorLeftWrite(pid_speed_l.output);
+    motorRightWrite(pid_speed_r.output);
 //    motorLeftWrite(100);
 
 }

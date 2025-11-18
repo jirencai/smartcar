@@ -42,7 +42,7 @@ void icmTest(void)
 void motorTest(void)
 {
     sprintf(textDisplay, "%f,%f,%f,%f,%f,%f\r\n",
-            (float)-turn_value, (float)turn_value, (float)encoder_data_2, (float)encoder_data_4, (float)img_error, (float)Yaw_gyro);
+            (float)pid_speed_l.output, (float)pid_speed_r.output, (float)encoder_data_2, (float)encoder_data_4, (float)img_error, (float)Yaw_gyro);
     wireless_uart_send_string(textDisplay);
 
 }
@@ -55,12 +55,14 @@ void readBuffer(void)
         data_buffer[textNum] = 0; // !!! ±ØÐë¼Ó×Ö·û´®½áÊø·û
         if (strncmp((char *)data_buffer, "turnKp=", 7) == 0)                turnPid.Kp = atof((char *)data_buffer + 7);
         else if (strncmp((char *)data_buffer, "turnKp2=", 8) == 0)          turnPid.Kp2 = atof((char *)data_buffer + 8);
-        else if (strncmp((char *)data_buffer, "turnGkd=", 8) == 0)          turnPid.GKD = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "turnGKD=", 8) == 0)          turnPid.GKD = atof((char *)data_buffer + 8);
         else if (strncmp((char *)data_buffer, "motorKp=", 8) == 0)          pid_speed_r.Kp = pid_speed_l.Kp = atof((char *)data_buffer + 8);
         else if (strncmp((char *)data_buffer, "motorKi=", 8) == 0)          pid_speed_r.Ki = pid_speed_l.Ki = atof((char *)data_buffer + 8);
         else if (strncmp((char *)data_buffer, "motorKd=", 8) == 0)          pid_speed_r.Kd = pid_speed_l.Kd = atof((char *)data_buffer + 8);
         else if (strncmp((char *)data_buffer, "motorIntMax=", 12) == 0)     pid_speed_r.limit = pid_speed_l.limit = atof((char *)data_buffer + 12);
-        else if (strncmp((char *)data_buffer, "dutyMax=", 8) == 0)          turnPid.Kp2 = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "dutyMax=", 8) == 0)          turnPid.outLimit = atof((char *)data_buffer + 8);
+        else if (strncmp((char *)data_buffer, "speed=", 6) == 0)            straight_value = atof((char *)data_buffer + 6);
+
         memset(data_buffer, 0, 16);
 
     }

@@ -22,6 +22,7 @@ extern bool lock_yaw;
 
 /*电机控制参数*/
 extern float turn_value;                            //电机转角值
+extern float straight_value;                        //直道速度
 
 
 /*图像宏*/

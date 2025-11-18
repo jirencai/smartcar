@@ -57,6 +57,7 @@ typedef struct
     float Kd;           //微分项
     float GKD;          //陀螺仪参数
 
+    float outLimit;     //输出限幅
     float output;       //pid输出项即转角值
 }turnPidTypedef;
 

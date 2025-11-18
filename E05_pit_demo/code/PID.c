@@ -12,7 +12,7 @@ pidTypedef pid_speed_r = {
         0,                      //输出值
         0, 0, 0, 0, 0,          //目标值，上一次的目标值，实际值，积分量
         0, 0, 0,                //此次误差，上次误差，上上次误差
-        0, 50, 5, 0,          //acc, Kp, Ki, Kd
+        0, 5, 0, 1,          //acc, Kp, Ki, Kd
         10, 0.1,                //kff1, kff2
         1000.0,                 //积分限幅
         0, 0, 0, 100.0          //Kp结果, Ki结果, Kd结果, 积分过度
@@ -22,7 +22,7 @@ pidTypedef pid_speed_l = {
         0,
         0, 0, 0, 0, 0,
         0, 0, 0,
-        0, 50, 5, 0,
+        0, 5, 0, 1,
         10, 0.1,
         1000.0,
         0, 0, 0, 100.0
@@ -31,8 +31,8 @@ pidTypedef pid_speed_l = {
 
 turnPidTypedef turnPid = {
         0, 0, 0,
-        0, 0, 0, 0, 0,
-        0
+        80, 5, 0, 0, 10,
+        1200, 0
 };
 /*位置式PID电机算法*/
 void PID_Motor(pidTypedef *p,float nowSpeed)//电机转速pid
@@ -110,11 +110,12 @@ float PID_turn(turnPidTypedef *p, float imgError, float gyroValue)
     /*PID计算得到*/
     p->output = p->error * p->Kp
             + p->error * abs(p->error) * p->Kp2
-            + (p->error - p->last_error) * p->Kd + p->gyro * p->GKD;
+            + (p->error - p->last_error) * p->Kd
+            - p->gyro * p->GKD;
 
     /*误差传递*/
     p->last_error = p->error;
-    p->output = Limit(p->output, Duty_max);
+    p->output = Limit(p->output, p->outLimit);
     /*输出返回值*/
     return p->output;
 }
