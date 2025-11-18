@@ -37,7 +37,7 @@ float filter_r(float value)                                                     
     }
     
     /*************************** Ò»½×ÂË²¨ *********************************/
-    out = out_last + alpha * (value - out_last);
+    out = out_last + alphaF * (value - out_last);
     out_last = out;
     
     return out;
@@ -57,7 +57,7 @@ float filter_l(float value)                                                //×óÂ
   }
 
   /*************************** Ò»½×ÂË²¨ *********************************/
-  out = out_last + alpha * (value - out_last);
+  out = out_last + alphaF * (value - out_last);
   out_last = out;
 
   return out;

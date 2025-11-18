@@ -79,31 +79,31 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
 //            (float)encoder_data_2, (float)encoder_data_4, (float)encoder_data_2_temp, (float)encoder_data_4_temp);
 //    wireless_uart_send_string(textDisplay);
 
+    //得到图像误差输出得到的转角映射
+    turn_value = PID_turn(&turnPid, error, Yaw_gyro);
+    pid_speed_r.target_val = turn_value;
+    pid_speed_l.target_val = -turn_value;
 
+    //输出给电机pid
     PID_Motor(&pid_speed_r, encoder_data_4);
     PID_Motor(&pid_speed_l, encoder_data_2);
 
-
-    motorLeftWrite(pid_speed_l.output);
-    motorRightWrite(pid_speed_r.output);
+    //输出给电机占空比
+//    motorLeftWrite(pid_speed_l.output);
+//    motorRightWrite(pid_speed_r.output);
+    motorLeftWrite(-turn_value);
+    motorRightWrite(turn_value);
+//    motorLeftWrite(100);
 
 }
 
-float speed_target;
 //#define PI 3.14159
 IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
 {
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
 
-    static int16_t index = 0;
-    speed_target = 100.0 * sin(2 * PI * index / (float)400.0);
-    index += 1;
-    if (index >= 400) index = 0;
-
-    pid_speed_r.target_val = speed_target;
-    pid_speed_l.target_val = speed_target;
-
+    /*计算转角值*/
 
 }
 
@@ -112,7 +112,8 @@ IFX_INTERRUPT(cc61_pit_ch1_isr, 0, CCU6_1_CH1_ISR_PRIORITY)
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU61_CH1);
 
-
+    /*这里获取陀螺仪参数*/
+    get_ICM_data();
 
 
 }

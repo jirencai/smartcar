@@ -45,9 +45,9 @@ void Init_ICM42688(void)
     // SPI初始化
     system_delay_ms(10);
         spi_init(ICM42688_SPI, SPI_MODE0, ICM42688_SPI_SPEED, ICM42688_SPC_PIN, ICM42688_SDI_PIN, ICM42688_SDO_PIN, ICM42688_CS_PIN);
-        ips200_show_string(0, 0, "ICM42688 Ready 1 ");
+//        ips200_show_string(10, 0, "ICM42688 Ready 1 ");
 //        gpio_init(ICM42688_CS_PIN, GPO, GPIO_HIGH,GPO_PUSH_PULL);
-        ips200_show_string(0, 0, "ICM42688 Ready 2 ");
+//        ips200_show_string(10, 0, "ICM42688 Ready 2 ");
     // 初始化超时
     char time = 50;
     // 读取陀螺仪型号陀螺仪自检
@@ -61,7 +61,7 @@ void Init_ICM42688(void)
         {
             // ICM42688,71
 //            printf("ok");
-            ips200_show_string(0, 0, "ICM42688 Ready!");
+//            ips200_show_string(0, 0, "ICM42688 Ready!");
             break;
         }
         else
@@ -71,7 +71,7 @@ void Init_ICM42688(void)
             if(time < 0)
             {
                 zf_log(0, "ICM42688 Init Error!");
-                ips200_show_string(0, 0, "ICM42688 Init Error!");
+//                ips200_show_string(0, 0, "ICM42688 Init Error!");
                 while(1);
                 // 卡在这里原因有以下几点
                 // ICM42688坏了,如果是新的概率极低

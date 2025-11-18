@@ -543,9 +543,9 @@ void IMU_calibration(void){
     float gyro_history[3][IMU_calibration_seconds];
     sint32 gyro_history_sum[3]={0,0,0};
     //閺嶁€冲櫙閹绘劗銇�
-    ips200_show_string(0,16*0,"IMU calibration");
-    ips200_show_string(0,16*2,"Don't move me!(2)");system_delay_ms(1000);
-    ips200_show_string(0,16*2,"Don't move me!(1)");system_delay_ms(1000);
+//    ips200_show_string(0,16*0,"IMU calibration");
+//    ips200_show_string(0,16*2,"Don't move me!(2)");system_delay_ms(1000);
+//    ips200_show_string(0,16*2,"Don't move me!(1)");system_delay_ms(1000);
     do{
         system_delay_us(250);
         Get_RAW_Gyro_ICM42688();
@@ -577,7 +577,7 @@ void IMU_calibration(void){
     gyro_x_correction = k*sum[0];
     gyro_y_correction = k*sum[1];
     gyro_z_correction = k*sum[2];
-    ips200_show_string(0,16*2,"IMU Calibration OK      ");
+//    ips200_show_string(0,16*2,"IMU Calibration OK      ");
 
 }
 

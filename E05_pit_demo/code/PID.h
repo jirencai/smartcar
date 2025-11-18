@@ -12,8 +12,8 @@
 
 #define Limit(x,y)          (x>y? y: (x<-(y)? -(y): x))
 
-#define Duty_max          1000
-#define Duty_min         -1000
+#define Duty_max          1500
+#define Duty_min         -1500
 
 typedef struct
 {
@@ -45,11 +45,28 @@ typedef struct
     float inte_exce;        //积分过度
 }pidTypedef;
 
+typedef struct
+{
+    float error;        //本次图像误差
+    float last_error;   //上一次图像误差
+    float gyro;         //陀螺仪数值
+
+    float Kp;           //第一级比例项
+    float Kp2;          //第二级比例项
+    float Ki;           //积分项
+    float Kd;           //微分项
+    float GKD;          //陀螺仪参数
+
+    float output;       //pid输出项即转角值
+}turnPidTypedef;
+
 extern pidTypedef pid_speed_r;
 extern pidTypedef pid_speed_l;
+extern turnPidTypedef turnPid;
 
-void PID_Motor(pidTypedef *p,float nowSpeed);           //电机转速位置式pid
-void PID_SpeedMotor(pidTypedef *p,float nowSpeed);      //电机转速增量式pid
-void PID_torque_compensation(pidTypedef *p);            //开环力矩前馈补偿
+void PID_Motor(pidTypedef *p,float nowSpeed);                       //电机转速位置式pid
+void PID_SpeedMotor(pidTypedef *p,float nowSpeed);                  //电机转速增量式pid
+void PID_torque_compensation(pidTypedef *p);                        //开环力矩前馈补偿
+float PID_turn(turnPidTypedef *p, float imgError, float gyroValue); //转角映射
 
 #endif /* CODE_PID_H_ */

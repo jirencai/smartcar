@@ -72,6 +72,7 @@ uint8 float_line_to_img(image_t *img, float line[][2], uint16 len);
 void clear_image(image_t *img);
 void SetImg_MoveAndZoom(float move, float zoom);
 void draw_x(image_t *img, int x, int y, int len, uint8_t value);
+void draw_o_direct(image_t *img, int x, int y, int radius, uint8_t value);
 void draw_o(image_t *img, int x, int y, int radius, uint8_t value);
 
 #endif

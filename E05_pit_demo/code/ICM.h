@@ -57,7 +57,7 @@ extern float Yaw_angle_counter;
 extern float Yaw_angle;
 extern float Yaw_gyro;
 
-extern float Pitch_a;//实时姿态角（我修改的）
+extern float Pitch_a;//实时姿态角（我修改的）  //实时姿态角的绝对值
 extern float Roll_a;
 extern float Yaw_a;
 extern float Pitch_a_Pi, Roll_a_Pi, Yaw_a_Pi;

@@ -12,7 +12,7 @@ pidTypedef pid_speed_r = {
         0,                      //输出值
         0, 0, 0, 0, 0,          //目标值，上一次的目标值，实际值，积分量
         0, 0, 0,                //此次误差，上次误差，上上次误差
-        0, 80, 0.5, 0,          //acc, Kp, Ki, Kp
+        0, 50, 5, 0,          //acc, Kp, Ki, Kd
         10, 0.1,                //kff1, kff2
         1000.0,                 //积分限幅
         0, 0, 0, 100.0          //Kp结果, Ki结果, Kd结果, 积分过度
@@ -22,19 +22,17 @@ pidTypedef pid_speed_l = {
         0,
         0, 0, 0, 0, 0,
         0, 0, 0,
-        0, 80, 0.5, 0,
+        0, 50, 5, 0,
         10, 0.1,
         1000.0,
         0, 0, 0, 100.0
 };
-pidTypedef pid_gyro = {
-        0,
-        0, 0, 0, 0, 0,
+
+
+turnPidTypedef turnPid = {
         0, 0, 0,
-        0, 80, 0.5, 0,
-        10, 0.1,
-        1000.0,
-        0, 0, 0, 100.0
+        1, 0, 0, 0, 0,
+        0
 };
 /*位置式PID电机算法*/
 void PID_Motor(pidTypedef *p,float nowSpeed)//电机转速pid
@@ -54,8 +52,8 @@ void PID_Motor(pidTypedef *p,float nowSpeed)//电机转速pid
                   + p->d_result;
 
     /*输出PID*/
-    p->outputSpeed = p->actual_val;
-    p->outputSpeed = Limit(p->outputSpeed,Duty_max);        //对输出结果限幅
+    p->output = p->actual_val;
+    p->output = Limit(p->output,Duty_max);        //对输出结果限幅
 
     /*误差传递*/
     p->err_previous= p->err_last;                           //误差传递
@@ -77,8 +75,8 @@ void PID_SpeedMotor(pidTypedef *p,float nowSpeed)
                   + p->d_result;
 
     /*输出PID*/
-    p->output = p->actual_val;
-    p->output = Limit(p->output,Duty_max);                  //对输出结果限幅
+    p->outputSpeed = p->actual_val;
+    p->outputSpeed = Limit(p->outputSpeed,Duty_max);                  //对输出结果限幅
 
     /*误差传递*/
     p->err_previous= p->err_last;                           //误差传递
@@ -101,4 +99,24 @@ void PID_torque_compensation(pidTypedef *p)
     /*误差传递*/
     p->target_last_val = p->target_val;                     //传递加速度
 }
+
+/*转角映射*/
+float PID_turn(turnPidTypedef *p, float imgError, float gyroValue)
+{
+    /*误差参数的获取*/
+    p->error = imgError;
+    p->gyro = gyroValue;
+
+    /*PID计算得到*/
+    p->output = p->error * p->Kp
+            + p->error * abs(p->error) * p->Kp2
+            + (p->error - p->last_error) * p->Kd + p->gyro * p->GKD;
+
+    /*误差传递*/
+    p->last_error = p->error;
+    p->output = Limit(p->output, Duty_max);
+    /*输出返回值*/
+    return p->output;
+}
+
 

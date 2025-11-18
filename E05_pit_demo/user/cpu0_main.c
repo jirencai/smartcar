@@ -40,34 +40,57 @@
 uint8_t new_image[MT9V03X_H][MT9V03X_W];
 uint8_t new_image1[MT9V03X_H][MT9V03X_W];   //去畸变以后的原始图像
 
+uint16_t data_buffer;                       //无线串口读取缓存区
+uint8_t data_len;                           //无线串口读取缓存区长度
+
 #define LED1                    (P20_9)
 #define LED2                    (P20_8)
 
 //定时中断宏定义
 #define KEYGET                  (CCU60_CH0 )                                     // 使用的周期中断编号
-#define ENCODERTIM              (CCU60_CH1 )
-#define SIN                     (CCU61_CH0 )
+#define MOTORCTL                (CCU60_CH1 )
+#define IMUGET                  (CCU61_CH1 )
+//#define MOTORCTL                (CCU61_CH0 )
 int core0_main(void)
 {
     clock_init();                   // 获取时钟频率<务必保留>
     debug_init();                   // 初始化默认调试串口
     // 此处编写用户代码 例如外设初始化代码等
 
-
+    /*device初始化*/
     motorInit();                //电机初始化
     keyInit();                  //按键初始化
 //    ips200Init();             //屏幕初始化
     wirelessUartInit();         //无线串口初始化
+    Init_ICM42688();            //陀螺仪初始化
+    Filter_Init();              //陀螺仪六路滤波初始化
+
+    if(IMU_calibrate_flag == 1)
+    {
+        gyro_x_correction = gyro_x_correction_experience;
+        gyro_y_correction = gyro_y_correction_experience;
+        gyro_z_correction = gyro_z_correction_experience;//零漂修正
+    }else{
+        IMU_calibration();   //陀螺仪校准
+        gyro_x_correction_experience = gyro_x_correction;
+        gyro_y_correction_experience = gyro_y_correction;
+        gyro_z_correction_experience = gyro_z_correction;//零漂修正
+    }
 
 
-    /*编码器及其中断初始化*/
-    encoderInit();              //编码器初始化
-    pit_ms_init(ENCODERTIM, 2);                                              // 初始化 CCU6_0_CH1 为周期中断 2ms 周期
-    pit_ms_init(KEYGET, 20);                                                   // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
-    pit_ms_init(SIN, 25);                                                       // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
+
 
     /*低通滤波器初始化*/
-    low_pass_filter_Init();     //低通滤波器初始化
+    low_pass_filter_Init();
+
+    /*编码器及其中断初始化*/
+    encoderInit();                                                              // 编码器初始化
+
+    pit_ms_init(MOTORCTL, 1);                                                   // 初始化 CCU6_0_CH1 为周期中断 2ms 周期
+    pit_ms_init(KEYGET, 20);                                                    // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
+    pit_us_init(IMUGET, 250);                                                   // 初始化 CCU6-1 CH1 位周期 250us 周期
+    //    pit_ms_init(MOTORCTL, 25);                                                       // 初始化 CCU6_0_CH0 为周期中断 20ms 周期
+//    motorLeftWrite(2000);
 
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
@@ -76,7 +99,16 @@ int core0_main(void)
 
         // 此处编写需要循环执行的代码
 	    keyScan();
-	    wirelessUartDisplay();
+//	    /*读取无线串口信息*/
+//	    data_len = wireless_uart_read_buffer(data_buffer, sizeof(data_buffer));
+//	    if (data_len != 0)
+//	    {
+//	        //判断串口读取到的数据
+//
+//	    }
+//        icmTest();
+
+
         // 此处编写需要循环执行的代码
 
 	}

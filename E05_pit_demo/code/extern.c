@@ -15,6 +15,9 @@ float fclip(float x, float low, float up) {return x > up ? up : x < low ? low : 
 uint16 start_time = 0;
 bool lock_yaw = 0;
 
+/*电机控制参数*/
+float turn_value;               //电机转角值
+
 /*屏幕显示参数*/
 uint8_t show_flag = 0;
 

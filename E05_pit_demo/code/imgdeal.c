@@ -892,6 +892,20 @@ void draw_x(image_t *img, int x, int y, int len, uint8_t value)
             AT(img, clip(x - i, 0, IMAGEW - 1), clip(y + i, 0, IMAGEH - 1)) = value;
     }
 }
+
+/*
+ * 直接绘制圆环
+ * img 传递的图像地址
+ * x 绘制点的横坐标
+ * y 绘制点的纵坐标
+ * radius 圆环半径
+ * value 绘制的颜色
+ */
+void draw_o_direct(image_t *img, int x, int y, int radius, uint8_t value) {
+    for (float i = -PI; i <= PI; i += PI / 10) {
+            AT(img, clip(x + radius * cosf(i), 0, IMAGEW - 1), clip(y + radius * sinf(i), 0, IMAGEH - 1)) = value;
+    }
+}
 /*
  * 绘制o
  * img 传递的图像地址

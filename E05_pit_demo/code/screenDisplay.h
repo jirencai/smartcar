@@ -11,7 +11,7 @@
 #include "zf_common_headfile.h"
 
 void displayProcess(void);
-
+void icmTest(void);
 void rawImgDisplay(void);
 void lineImgDisplay(void);
 

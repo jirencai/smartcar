@@ -20,6 +20,10 @@ extern uint8 Image_Processing;                      //0:未使用 1:正在处理 2:处理
 extern uint16 start_time;
 extern bool lock_yaw;
 
+/*电机控制参数*/
+extern float turn_value;                            //电机转角值
+
+
 /*图像宏*/
 #define IMAGEH MT9V03X_H
 #define IMAGEW MT9V03X_W

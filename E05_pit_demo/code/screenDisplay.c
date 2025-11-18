@@ -86,8 +86,8 @@ void lineImgDisplay(void)
     if(Lpt1_found)draw_o(&img_line, rpts1s[Lpt1_rpts1s_id1][0], rpts1s[Lpt1_rpts1s_id1][1], 3, 255);
 //                if(Lpt1_found)draw_o(&img_line, rpts1s[Lpt1_rpts1s_id1+25][0], rpts1s[Lpt1_rpts1s_id1+25][1], 3, 255);
     // 绘制道路元素
-    draw_cross();
-    draw_circle();
+//    draw_cross();
+//    draw_circle();
     // 绘制标准宽度参考(45cm
 //    draw_road_reference(&img_line, 255);
     ips200_show_gray_image(0, 120, img_line.data[0], MT9V03X_W, MT9V03X_H, 188, 120, 0); //IPM_map img_line.data[0]

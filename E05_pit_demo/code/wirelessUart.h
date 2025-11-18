@@ -21,5 +21,8 @@ extern char textDisplay[];
 void wirelessUartInit(void);
 void wirelessUartDisplay(void);
 void wirelessUartReceive(void);
+void icmTest(void);
+void motorTest(void);
+
 
 #endif /* CODE_WIRELESSUART_H_ */

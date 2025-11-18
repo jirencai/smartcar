@@ -8,6 +8,7 @@
 #define LED1                    (P20_9)
 
 char textDisplay[64];
+uint16_t textNum;
 //uint8 data_buffer[32];
 //uint8 data_len;
 void wirelessUartInit(void)
@@ -26,9 +27,33 @@ void wirelessUartInit(void)
 
 void wirelessUartDisplay(void)
 {
-    sprintf(textDisplay, "%f,%f,%f,%f,%f",
-            (float)error, (float)img_error, (float)far_error, (float)last_error, (float)delta_error);
+    sprintf(textDisplay, "%f,%f,%f,%f,%f,%f\r\n",
+            (float)error, (float)img_error, (float)far_error, (float)last_error, (float)delta_error, (float)turn_value);
     wireless_uart_send_string(textDisplay);
+}
+void icmTest(void)
+{
+    sprintf(textDisplay, "%f,%f,%f,%f\r\n",
+            (float)Yaw_gyro, (float)Pitch_a, (float)Roll_a, (float)Yaw_a);
+    wireless_uart_send_string(textDisplay);
+
+            //转向加速度         各种角度值
+}
+void motorTest(void)
+{
+    sprintf(textDisplay, "%f,%f,%f,%f,%f,%f\r\n",
+            (float)-turn_value, (float)turn_value, (float)encoder_data_2, (float)encoder_data_4, (float)img_error, (float)Yaw_gyro);
+    wireless_uart_send_string(textDisplay);
+
+}
+
+void readBuffer(void)
+{
+    textNum = wireless_uart_read_buffer();
+    if (!textNum)
+    {
+
+    }
 }
 
 #define FRAME_HEADER1   0xAA

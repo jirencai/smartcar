@@ -32,7 +32,7 @@ extern int far_x1, far_x2, far_y1, far_y2;
 void check_cross(void);
 void cross_run(void);
 void cross_farline(void);
-void draw_cross();
+void draw_cross(void);
 
 
 #endif /* CODE_CROSS_H_ */

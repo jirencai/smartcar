@@ -137,6 +137,7 @@ void core1_main(void)
                     if (circle_type == CIRCLE_NONE) check_circle();
                     if (circle_type != CIRCLE_NONE) break;
                 }
+                break;
             }
 
 //            ③识别到元素以后开始进行元素识别处理
@@ -223,6 +224,7 @@ void core1_main(void)
                         break;
                 }
                 if(Circle_In_Ready==1) Circle_In_Ready_Check();
+                aim_idx = clip(aim_idx_f, 0, rptsn_num - 1);
 
                 // 计算远锚点偏差值
                 float dx = cx - rptsn[aim_idx][0];
@@ -273,8 +275,14 @@ void core1_main(void)
                     mt9v03x_finish_flag = 0;
             }
 
-        }
+//        }
+//            mt9v03x_finish_flag = 0;
+//            fre_cy.img_end_time = fre_cy.m10stime;
 
+        }
+        displayProcess();
+        motorTest();
+//        icmTest();
 
 
 
