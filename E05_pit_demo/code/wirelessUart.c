@@ -64,7 +64,6 @@ void readBuffer(void)
         else if (strncmp((char *)data_buffer, "speed=", 6) == 0)            straight_value = atof((char *)data_buffer + 6);
 
         memset(data_buffer, 0, 16);
-
     }
     system_delay_ms(50);
 

@@ -53,7 +53,7 @@ void PID_Motor(pidTypedef *p,float nowSpeed)//电机转速pid
 
     /*输出PID*/
     p->output = p->actual_val;
-    p->output = Limit(p->output,Duty_max);        //对输出结果限幅
+    p->output = Limit(p->output,Duty_max);                  //对输出结果限幅
 
     /*误差传递*/
     p->err_previous= p->err_last;                           //误差传递

@@ -55,12 +55,12 @@ int core0_main(void)
     // 此处编写用户代码 例如外设初始化代码等
 
     /*device初始化*/
-    motorInit();                //电机初始化
-    keyInit();                  //按键初始化
-//    ips200Init();             //屏幕初始化
-    wirelessUartInit();         //无线串口初始化
-    Init_ICM42688();            //陀螺仪初始化
-    Filter_Init();              //陀螺仪六路滤波初始化
+    motorInit();                    //电机初始化
+    keyInit();                      //按键初始化
+//    ips200Init();                 //屏幕初始化
+    wirelessUartInit();             //无线串口初始化
+    Init_ICM42688();                //陀螺仪初始化
+    Filter_Init();                  //陀螺仪六路滤波初始化
 
     if(IMU_calibrate_flag == 1)
     {

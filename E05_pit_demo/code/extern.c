@@ -42,7 +42,7 @@ volatile float delta_error = 0;
 /*图像处理参数*/
 //模式调配
 bool Extra_search_path = true;          //搜边线时，搜到图像边界后是否继续向上搜索
-bool Dynamic_begin_x = true;            //是否使用动态搜索起点
+bool Dynamic_begin_x = !true;            //是否使用动态搜索起点
 
 int begin_id = 0;                       //中间数组的索引
 int far_begin_id = 0;                   //远线中间数组的索引

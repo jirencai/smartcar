@@ -75,7 +75,6 @@ void core1_main(void)
 //    mt9v03x_set_exposure_time(30);
 
 
-
     // 此处编写用户代码 例如外设初始化代码等
 
     cpu_wait_event_ready();                 // 等待所有核心初始化完毕
@@ -224,7 +223,7 @@ void core1_main(void)
                         break;
                 }
                 if(Circle_In_Ready==1) Circle_In_Ready_Check();
-                aim_idx = clip(aim_idx_f, 0, rptsn_num - 1);
+                aim_idx = (sint16)(clip(aim_idx_f, 0, rptsn_num - 1));
 
                 // 计算远锚点偏差值
                 float dx = cx - rptsn[aim_idx][0];
