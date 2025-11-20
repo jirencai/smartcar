@@ -22,6 +22,7 @@ void wirelessUartDisplay(void);
 void wirelessUartReceive(void);
 void icmTest(void);
 void motorTest(void);
+void imgTest(void);
 void readBuffer(void);
 
 

@@ -46,6 +46,12 @@ void motorTest(void)
     wireless_uart_send_string(textDisplay);
 
 }
+void imgTest(void)
+{
+    sprintf(textDisplay, "%f,%f,%f,%f\r\n",
+            (float)thres_L, (float)thres_R, (float)thres_use, (float)thres);
+    wireless_uart_send_string(textDisplay);
+}
 
 void readBuffer(void)
 {

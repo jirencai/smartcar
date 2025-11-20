@@ -42,7 +42,7 @@ volatile float delta_error = 0;
 /*Í¼Ïñ´¦Àí²ÎÊı*/
 //Ä£Ê½µ÷Åä
 bool Extra_search_path = true;          //ËÑ±ßÏßÊ±£¬ËÑµ½Í¼Ïñ±ß½çºóÊÇ·ñ¼ÌĞøÏòÉÏËÑË÷
-bool Dynamic_begin_x = !true;            //ÊÇ·ñÊ¹ÓÃ¶¯Ì¬ËÑË÷Æğµã
+bool Dynamic_begin_x = true;            //ÊÇ·ñÊ¹ÓÃ¶¯Ì¬ËÑË÷Æğµã
 
 int begin_id = 0;                       //ÖĞ¼äÊı×éµÄË÷Òı
 int far_begin_id = 0;                   //Ô¶ÏßÖĞ¼äÊı×éµÄË÷Òı
@@ -61,7 +61,7 @@ uint8 thres = 140;                      //¶şÖµ»¯ãĞÖµ£¬Ö÷ÒªÓÃÓÚÕÒÆğÊ¼µã(±ßÏßÊ¹ÓÃ×
 sint16 block_size = 10;                 // ×ÔÊÊÓ¦ãĞÖµµÄblock´óĞ¡10
 sint16 clip_value = 13;                 // ×ÔÊÊÓ¦ãĞÖµµÄãĞÖµ²Ã¼õÁ¿ 15
 
-sint8 OSTU_clip = 0;                    //´ó½ò·¨ãĞÖµÆ«²î
+sint8 OSTU_clip = 3;                    //´ó½ò·¨ãĞÖµÆ«²î
 sint16 line_blur_kernel = 7;            // ±ßÏßÈı½ÇÂË²¨ºËµÄ´óĞ¡
 
 sint16 begin_dx = 0;                    // ÆğÊ¼µã¾àÀëÍ¼ÏñÖĞĞÄµÄ×óÓÒÆ«ÒÆÁ¿
